@@ -62,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 20),
+              
               const CustomText(text: 'Order:', fontSize: 24, fontWeight: FontWeight.bold),
               const SizedBox(height: 12),
               CustomCard(
