@@ -1,3 +1,4 @@
+import 'package:caps_book/features/config/styles.dart';
 import 'package:caps_book/features/presentation/widgets/custom_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:caps_book/features/presentation/widgets/custom_card.dart';
@@ -34,8 +35,10 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Image.network(
           'https://zenvicsoft.com/assets/img/logo-color.png',
           height: 50,
+          color: Colors.white,
         ),
-        backgroundColor: Colors.grey[200],
+        backgroundColor: ColorStyle.primaryColor,
+        foregroundColor: Colors.white,
         actions: [
           IconButton(onPressed: () {}, iconSize: 25, icon: const Icon(Icons.notifications)),
           IconButton(onPressed: () {}, iconSize: 25, icon: const Icon(Icons.person)),
@@ -101,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           onPressed: currentStep == 0 ? startTrip : null,
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(),
-                            backgroundColor: Colors.blue),
+                            backgroundColor: ColorStyle.primaryColor),
                           child: const Text('Start Trip',style: TextStyle(color: Colors.white),),
                         ),
                         ElevatedButton(

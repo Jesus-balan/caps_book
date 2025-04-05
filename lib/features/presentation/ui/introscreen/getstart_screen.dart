@@ -1,3 +1,4 @@
+import 'package:caps_book/features/config/styles.dart';
 import 'package:flutter/material.dart';
 
 class GetStartScreen extends StatelessWidget {
@@ -6,7 +7,7 @@ class GetStartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: ColorStyle.primaryColor,
       body: Column(
         children: [
           Expanded(

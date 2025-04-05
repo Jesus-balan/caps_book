@@ -40,6 +40,8 @@ dependencies:
   timeline_tile:
   table_calendar:
   flutter_bloc:
+  geolocator:
+  geolocator_android:
 
 dev_dependencies:
   flutter_test:

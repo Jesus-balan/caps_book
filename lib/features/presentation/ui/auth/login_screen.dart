@@ -1,3 +1,4 @@
+import 'package:caps_book/features/config/styles.dart';
 import 'package:caps_book/features/presentation/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: ColorStyle.primaryColor,
       body: SafeArea(
         child: Stack(
           children: [
@@ -86,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
+                            backgroundColor: ColorStyle.primaryColor,
                             padding: EdgeInsets.symmetric(vertical: 18),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),

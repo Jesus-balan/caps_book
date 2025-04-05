@@ -1,3 +1,4 @@
+import 'package:caps_book/features/config/styles.dart';
 import 'package:caps_book/features/presentation/ui/home/attendance_screen.dart';
 import 'package:caps_book/features/presentation/ui/home/order_screen.dart';
 import 'package:caps_book/features/presentation/ui/home/home_screen.dart';
@@ -38,9 +39,9 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
         ],
         onChange: _onItemTapped,
         style: FluidNavBarStyle(
-          barBackgroundColor: Colors.grey[200],
-          iconUnselectedForegroundColor: Colors.black,
-          iconSelectedForegroundColor: Color.fromARGB(255, 13, 71, 161),
+          barBackgroundColor: ColorStyle.primaryColor,
+          iconUnselectedForegroundColor: Colors.white,
+          iconSelectedForegroundColor: Colors.white,
         ),
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:caps_book/features/config/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,12 +13,12 @@ class SplashScreen extends StatelessWidget {
     });
 
     return Scaffold(
-      backgroundColor: Colors.black, // Dark theme for a clean look
+      backgroundColor: ColorStyle.primaryColor, // Dark theme for a clean look
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("assets/images/cabs.png", width: 150, color: Colors.yellow,), // Your App Logo
+            Image.asset("assets/images/cabs.png", width: 150, color: Colors.white,), // Your App Logo
             const SizedBox(height: 20),
             DefaultTextStyle(
               style: GoogleFonts.lora(
