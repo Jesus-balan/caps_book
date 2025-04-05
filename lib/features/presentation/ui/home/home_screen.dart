@@ -99,12 +99,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         ElevatedButton(
                           onPressed: currentStep == 0 ? startTrip : null,
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(),
+                            backgroundColor: Colors.blue),
                           child: const Text('Start Trip',style: TextStyle(color: Colors.white),),
                         ),
                         ElevatedButton(
                           onPressed: currentStep == 1 ? completeTrip : null,
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(),
+                            backgroundColor: Colors.green),
                           child: const Text('Complete Trip',style: TextStyle(color: Colors.white),),
                         ),
                       ],
@@ -112,6 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
+              SizedBox(height: 15,)
             ],
           ),
         ),

@@ -11,11 +11,7 @@ class CustomCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.grey.shade200, Colors.white],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: Colors.grey.shade300, width: 1.5),
         boxShadow: [

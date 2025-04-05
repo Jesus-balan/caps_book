@@ -38,6 +38,8 @@ dependencies:
   google_fonts:
   fluid_bottom_nav_bar:
   timeline_tile:
+  table_calendar:
+  flutter_bloc:
 
 dev_dependencies:
   flutter_test:

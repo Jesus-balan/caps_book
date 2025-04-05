@@ -6,7 +6,9 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Home')),
       body: const Center(child: Text('Welcome to Caps Booking App')),
     );
   }
