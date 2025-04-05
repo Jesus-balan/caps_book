@@ -1,5 +1,6 @@
-import 'package:caps_book/features/data/model/booking_model.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../../data/model/booking_model.dart';
 
 class BookingCard extends StatelessWidget {
   final Booking booking;
@@ -7,86 +8,146 @@ class BookingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      elevation: 4,
-      shadowColor: Colors.black26,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Status Badge
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: booking.isCompleted ? Colors.green[100] : Colors.blue[100],
-                borderRadius: BorderRadius.circular(20),
+    final formattedDate = DateFormat('dd MMM yyyy').format(booking.date);
+
+    return InkWell(
+      onTap: () {}, // Future: Navigate to detail screen
+      borderRadius: BorderRadius.circular(16),
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 4,
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// 🔹 Status & Date
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildStatusBadge(),
+                  Row(
+                    children: [
+                      const Icon(Icons.calendar_today, size: 14, color: Colors.black54),
+                      const SizedBox(width: 4),
+                      Text(
+                        formattedDate,
+                        style: const TextStyle(fontSize: 13, color: Colors.black54),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              child: Text(
-                booking.isCompleted ? "Completed Order" : "Upcoming Order",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: booking.isCompleted ? Colors.green[800] : Colors.blue[800],
-                ),
+              Divider(),
+              const SizedBox(height: 16),
+
+              /// 🔹 Locations
+              Row(
+                children: [
+                  Expanded(child: _buildLocation("From", booking.source, Icons.location_on, Colors.red)),
+                  const SizedBox(width: 10),
+                  Expanded(child: _buildLocation("To", booking.destination, Icons.flag, Colors.blue)),
+                ],
               ),
-            ),
-            const SizedBox(height: 12),
 
-            // Source & Destination
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildLocationInfo(Icons.location_on, "From", booking.source, Colors.red),
-                _buildLocationInfo(Icons.flag, "To", booking.destination, Colors.blue),
-              ],
-            ),
+              const SizedBox(height: 16),
 
-            const SizedBox(height: 12),
-
-            // Distance & Time
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildInfoTile(Icons.directions_car, "Distance", booking.distance),
-                _buildInfoTile(Icons.access_time, "ETA", "45 mins"),
-              ],
-            ),
-          ],
+              /// 🔹 Info - Distance & Status
+              Row(
+                children: [
+                  Expanded(child: _buildInfoTile(Icons.route, "Distance", booking.distance)),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildInfoTile(
+                      Icons.timelapse,
+                      "Trip Status",
+                      booking.isCompleted ? "Completed" : "Ongoing",
+                      valueColor: booking.isCompleted ? Colors.green : Colors.orange,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildLocationInfo(IconData icon, String title, String value, Color color) {
+  Widget _buildStatusBadge() {
+    final isCompleted = booking.isCompleted;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: isCompleted ? Colors.green[100] : Colors.orange[100],
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        isCompleted ? "Completed Order" : "Upcoming Order",
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.bold,
+          color: isCompleted ? Colors.green[800] : Colors.orange[800],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocation(String label, String place, IconData icon, Color color) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20, color: color),
-        const SizedBox(width: 6),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: const TextStyle(fontSize: 12, color: Colors.black54)),
-            Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-          ],
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, size: 20, color: color),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: const TextStyle(fontSize: 12, color: Colors.black54)),
+              const SizedBox(height: 2),
+              Text(
+                place,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, overflow: TextOverflow.ellipsis),
+              ),
+            ],
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildInfoTile(IconData icon, String title, String value) {
+  Widget _buildInfoTile(IconData icon, String label, String value, {Color? valueColor}) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: Colors.black54),
-        const SizedBox(width: 6),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: const TextStyle(fontSize: 12, color: Colors.black54)),
-            Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-          ],
+        Icon(icon, size: 20, color: Colors.black45),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: const TextStyle(fontSize: 12, color: Colors.black54)),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: valueColor ?? Colors.black87,
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
