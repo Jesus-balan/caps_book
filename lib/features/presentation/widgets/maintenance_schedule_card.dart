@@ -1,7 +1,6 @@
 import 'package:caps_book/features/presentation/widgets/custom_add_button.dart';
-import 'package:caps_book/features/presentation/widgets/maintennance_sheet.dart';
+import 'package:caps_book/features/presentation/widgets/maintenance_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class MaintenanceScheduleCard extends StatelessWidget {
   final String vehicleName;
@@ -24,46 +23,55 @@ class MaintenanceScheduleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
-      child: Card(
-        elevation: 5,
-        color: Colors.white,
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Maintenance Sheet',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Colors.grey.shade300, width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.deepPurpleAccent,
+              // blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Maintenance Sheet',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-                  CustomBottomSheetButton(
-                    label: 'Add',
-                    icon: Icons.add,
-                    bottomSheet: const MaintenanceStatusSheet(),
-                  ),
-                ],
-              ),
-              const Divider(),
-              const SizedBox(height: 8),
-              _buildRow('Vehicle Name', vehicleName),
-              _buildRow('Shop Name', shopName),
-              const SizedBox(height: 8),
-              _buildRow('Starting Date', startingDate),
-              _buildRow('Starting Time', startingTime, isHighlight: true),
-              const SizedBox(height: 8),
-              _buildRow('Maintenance Type', maintenanceType, isHighlight: true),
-              _buildRow('Starting Km', startingKm, isHighlight: true),
-            ],
-          ),
+                ),
+                CustomBottomSheetButton(
+                  label: 'Add',
+                  icon: Icons.add,
+                  bottomSheet: const MaintenanceStatusSheet(),
+                ),
+              ],
+            ),
+            const Divider(),
+            const SizedBox(height: 8),
+            _buildRow('Vehicle Name', vehicleName),
+            const SizedBox(height: 8),
+            _buildRow('Shop Name', shopName),
+            const SizedBox(height: 8),
+            _buildRow('Starting Date', startingDate),
+            const SizedBox(height: 8),
+            _buildRow('Starting Time', startingTime, isHighlight: true),
+            const SizedBox(height: 8),
+            _buildRow('Maintenance Type', maintenanceType, isHighlight: true),
+            const SizedBox(height: 8),
+            _buildRow('Starting Km', startingKm, isHighlight: true),
+          ],
         ),
       ),
     );

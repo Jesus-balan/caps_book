@@ -27,6 +27,7 @@ class _RideScreenState extends State<RideScreen> {
       appBar: AppBar(
         foregroundColor: Colors.white,
         automaticallyImplyLeading: false,
+        centerTitle: true,
         title: const Text("Cab Bookings"),
         backgroundColor: ColorStyle.primaryColor,
         elevation: 0,

@@ -13,11 +13,19 @@ class BookingCard extends StatelessWidget {
     return InkWell(
       onTap: () {}, // Future: Navigate to detail screen
       borderRadius: BorderRadius.circular(16),
-      child: Card(
+      child: Container(
         margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 4,
-        color: Colors.white,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade300, width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.deepPurpleAccent,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: Column(
@@ -40,7 +48,7 @@ class BookingCard extends StatelessWidget {
                   ),
                 ],
               ),
-              Divider(),
+              const Divider(),
               const SizedBox(height: 16),
 
               /// 🔹 Locations

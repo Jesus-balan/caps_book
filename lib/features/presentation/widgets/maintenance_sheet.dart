@@ -101,9 +101,4 @@ class _MaintenanceStatusSheetState extends State<MaintenanceStatusSheet> {
     );
   }
 
-  @override
-  void dispose() {
-    costController.dispose();
-    super.dispose();
-  }
 }

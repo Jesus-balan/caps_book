@@ -3,6 +3,7 @@ import 'package:caps_book/features/presentation/widgets/custom_text.dart';
 import 'package:caps_book/features/presentation/widgets/custom_timeline.dart';
 import 'package:caps_book/features/presentation/widgets/maintenance_schedule_card.dart';
 import 'package:caps_book/features/presentation/widgets/ride_card.dart';
+import 'package:caps_book/features/presentation/widgets/unplaned_maintenance.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -35,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
         automaticallyImplyLeading: false,
         title: Image.network(
           'https://zenvicsoft.com/assets/img/logo-color.png',
-          height: 50,
+          height: screenHeight * 0.05,
           color: Colors.white,
         ),
         backgroundColor: ColorStyle.primaryColor,
@@ -67,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 date: '2025-04-05',
                 km: '42 KM',
               ),
-              SizedBox(height: 15),
+              SizedBox(height: 10),
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
@@ -77,8 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   border: Border.all(color: Colors.grey.shade300, width: 1.5),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.deepPurpleAccent.withOpacity(0.2),
-                      offset: const Offset(0, 3),
+                      color: Colors.deepPurpleAccent,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
@@ -114,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       currentStep: currentStep,
                       isLast: true,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -145,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 15),
+              SizedBox(height: 20),
               MaintenanceScheduleCard(
                 vehicleName: "XUV 500",
                 shopName: "Jayam Auto Works",
@@ -154,9 +155,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 maintenanceType: "Oil Change",
                 startingKm: "25600 km",
               ),
+              SizedBox(height: screenHeight * 0.06),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            backgroundColor: Colors.white,
+            isScrollControlled: true, // Full height sheet
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            builder: (context) => UnplannedMaintenanceSheet(), // Ungaloda screen
+          );
+        },
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: const Text(
+          'Add Unplanned',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.deepPurpleAccent,
       ),
     );
   }

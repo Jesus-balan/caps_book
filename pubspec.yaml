@@ -43,6 +43,7 @@ dependencies:
   geolocator:
   geolocator_android:
   flutter_slidable:
+  file_picker:
   intl:
 
 dev_dependencies:

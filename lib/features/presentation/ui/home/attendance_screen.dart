@@ -132,7 +132,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 final bool isPunchedOut = state is PunchOutSuccess;
 
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: SizedBox(
                     width: double.infinity,
                     height: 55,
@@ -166,7 +166,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: isPunchedOut
                             ? Colors.grey
-                            : (isPunchedIn ? Colors.red : Colors.green),
+                            : (isPunchedIn ? Colors.red : Colors.deepPurpleAccent),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
