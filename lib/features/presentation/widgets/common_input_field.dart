@@ -6,7 +6,7 @@ class CommonTextField extends StatelessWidget {
   final String label;
   final TextEditingController controller;
   final String? Function(String?)? validator;
-  final int maxLines;
+  final int? maxLines;
   final TextInputType keyboardType;
 
   const CommonTextField({
@@ -14,7 +14,7 @@ class CommonTextField extends StatelessWidget {
     required this.label,
     required this.controller,
     this.validator,
-    this.maxLines = 1,
+    this.maxLines,
     this.keyboardType = TextInputType.text,
   });
 
@@ -27,7 +27,7 @@ class CommonTextField extends StatelessWidget {
         validator: validator,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         keyboardType: keyboardType,
-        maxLines: maxLines,
+        maxLength: maxLines,
         style: GoogleFonts.lora(fontSize: 16, color: Colors.black87),
         decoration: InputDecoration(
           labelText: label,

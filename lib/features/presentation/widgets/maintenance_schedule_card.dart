@@ -45,7 +45,7 @@ class MaintenanceScheduleCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Maintenance Sheet',
+                  'Driver Name',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

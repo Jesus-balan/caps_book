@@ -1,6 +1,6 @@
 import 'package:caps_book/features/config/styles.dart';
 import 'package:caps_book/features/presentation/ui/home/attendance_screen.dart';
-import 'package:caps_book/features/presentation/ui/home/ride_screen.dart';
+import 'package:caps_book/features/presentation/ui/home/myride_screen.dart';
 import 'package:caps_book/features/presentation/ui/home/home_screen.dart';
 import 'package:caps_book/features/presentation/ui/home/Incentive_screen.dart';
 import 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';
@@ -16,7 +16,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   final List<Widget> _pages = [
     HomeScreen(),
     AttendanceScreen(),
-    RideScreen(),
+    MyRideScreen(),
     IncentiveScreen(),
   ];
 

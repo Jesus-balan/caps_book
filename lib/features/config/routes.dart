@@ -1,4 +1,5 @@
 import 'package:caps_book/features/presentation/ui/auth/login_screen.dart';
+import 'package:caps_book/features/presentation/ui/bookingdetails/booking_details.dart';
 import 'package:caps_book/features/presentation/ui/home/home_screen.dart';
 import 'package:caps_book/features/presentation/ui/introscreen/getstart_screen.dart';
 import 'package:caps_book/features/presentation/ui/introscreen/splash_screen.dart';
@@ -25,6 +26,9 @@ class AppRoutes {
         break;
       case '/home':
         page = const HomeScreen();
+        break;
+      case '/ridesummary':
+        page = const RideSummaryScreen();
         break;
       default:
         page = const Scaffold(

@@ -96,25 +96,12 @@ class _UnplannedMaintenanceSheetState
               validator: fieldValidator,
             ),
             const SizedBox(height: 10),
-
-            CommonTextField(
-              label: 'End Km',
-              controller: endKmController,
-              validator: fieldValidator,
-            ),
-            const SizedBox(height: 10),
-
             CommonDatePickerField(
                 label: 'Start Date', controller: startDateController),
             const SizedBox(height: 10),
-
-            CommonDatePickerField(
-                label: 'End Date', controller: endDateController),
-            const SizedBox(height: 15),
-
             /// 📎 Bill Upload Field
             Text(
-              'Upload Bill',
+              'Issue photo',
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),

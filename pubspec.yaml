@@ -40,9 +40,14 @@ dependencies:
   timeline_tile:
   table_calendar:
   flutter_bloc:
+  dio:
+  hive:
+  hive_flutter:
   geolocator:
   geolocator_android:
   flutter_slidable:
+  lucide_icons:
+  jwt_decoder:
   file_picker:
   intl:
 
@@ -56,6 +61,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  hive_generator:
+  build_runner:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
