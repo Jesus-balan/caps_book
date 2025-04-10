@@ -1,4 +1,5 @@
 import 'package:caps_book/features/config/routes.dart';
+import 'package:caps_book/features/config/styles.dart';
 import 'package:caps_book/features/data/repositories/login_repository.dart';
 import 'package:caps_book/features/data/repositories/ride_boking_repository.dart';
 import 'package:caps_book/features/presentation/blocs/login-auth/bloc/login_bloc.dart';
@@ -14,7 +15,9 @@ void main() async {
 
   final rideRepository = RideRepository(); // <-- define it here
 
-  runApp(
+  
+  await Hive.openBox('attendanceBox'); // Add this line
+  runApp(  
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => LoginBloc(LoginRepository())),
@@ -36,7 +39,7 @@ class MyApp extends StatelessWidget {
       title: 'Caps Booking',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: ColorStyle.primaryColor),
         useMaterial3: true,
       ),
       initialRoute: '/',

@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-
-
 import 'package:caps_book/features/config/styles.dart';
-import 'package:caps_book/features/presentation/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
+
+
+import 'package:caps_book/features/presentation/widgets/custom_text.dart';
 import 'package:http/http.dart' as http;
 
 class RideSummaryScreen extends StatelessWidget {

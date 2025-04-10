@@ -1,5 +1,4 @@
 import 'package:caps_book/features/config/styles.dart';
-import 'package:caps_book/features/data/model/myride_model.dart';
 import 'package:caps_book/features/presentation/blocs/myride/myride_bloc.dart';
 import 'package:caps_book/features/presentation/blocs/myride/myride_event.dart';
 import 'package:caps_book/features/presentation/blocs/myride/myride_state.dart';

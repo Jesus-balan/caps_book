@@ -1,3 +1,4 @@
+import 'package:caps_book/features/config/styles.dart';
 import 'package:flutter/material.dart';
 
 class RideTile extends StatelessWidget {
@@ -25,7 +26,7 @@ class RideTile extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade300, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.deepPurpleAccent,
+            color: ColorStyle.primaryColor,
             offset: const Offset(0, 6),
           ),
         ],
