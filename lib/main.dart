@@ -9,8 +9,8 @@ import 'package:hive_flutter/adapters.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter(); // Hive init
-
-  runApp(
+  await Hive.openBox('attendanceBox'); // Add this line
+  runApp(  
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => LoginBloc(LoginRepository())),
