@@ -1,149 +1,339 @@
-import 'package:caps_book/features/presentation/widgets/custom_timeline.dart';
-import 'package:flutter/material.dart';
-import 'package:caps_book/features/presentation/widgets/custom_card.dart';
+import 'package:caps_book/features/config/styles.dart';
+import 'package:caps_book/features/presentation/widgets/custom_add_button.dart';
 import 'package:caps_book/features/presentation/widgets/custom_text.dart';
+import 'package:caps_book/features/presentation/widgets/custom_timeline.dart';
+import 'package:caps_book/features/presentation/widgets/maintenanace_edit.dart';
+import 'package:caps_book/features/presentation/widgets/maintenance_complete.dart';
+import 'package:caps_book/features/presentation/widgets/maintenance_schedule_card.dart';
+import 'package:caps_book/features/presentation/widgets/ride_tile_widget.dart';
+import 'package:caps_book/features/presentation/widgets/summary_card.dart';
+import 'package:caps_book/features/presentation/widgets/unplaned_maintenance.dart';
+import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int currentStep = 0; // 0 -> Ordered, 1 -> Traveling, 2 -> Completed
-
-  void startTrip() {
-    setState(() {
-      currentStep = 1; // Move to Traveling
-    });
-  }
-
-  void completeTrip() {
-    setState(() {
-      currentStep = 2; // Move to Completed
-    });
-  }
+  int tripStep = 0; // 0 = ready for pickup, 1 = picked, 2 = dropped
+  DateTime? pickupTime;
+  DateTime? dropTime;
+  DateTime? completeTime;
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Image.network(
-          'https://zenvicsoft.com/assets/img/logo-color.png',
-          height: 50,
+        title: Image.asset(
+          'assets/images/logo.png',
+          height: screenHeight * 0.035,
+          color: Colors.white,
         ),
-        backgroundColor: Colors.grey[200],
+        backgroundColor: ColorStyle.primaryColor,
+        foregroundColor: Colors.white,
         actions: [
-          IconButton(onPressed: () {}, iconSize: 25, icon: const Icon(Icons.notifications)),
-          IconButton(onPressed: () {}, iconSize: 25, icon: const Icon(Icons.person)),
+          IconButton(
+            onPressed: () {},
+            iconSize: screenWidth * 0.065,
+            icon: const Icon(Icons.notifications),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/profile');
+            },
+            iconSize: screenWidth * 0.065,
+            icon: const Icon(Icons.person),
+          ),
         ],
       ),
+      backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20,),
+        padding: EdgeInsets.all(screenWidth * 0.04),
         child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 15,),
-              CustomCard(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    CustomText(text: 'Today, 19 Jan', fontSize: 24, fontWeight: FontWeight.bold),
-                    SizedBox(height: 8),
-                    CustomText(text: "₹ 3,000", fontSize: 22, fontWeight: FontWeight.bold, color: Colors.green),
-                    SizedBox(height: 8),
-                    CustomText(text: '2 Rides Completed', fontSize: 20, fontWeight: FontWeight.bold),
-                  ],
-                ),
+              // Summary Cards
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: SummaryCard(
+                      title: "Total Earnings(April)",
+                      value: "\$3100",
+                      icon: LucideIcons.wallet,
+                      bottomColor: ColorStyle.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SummaryCard(
+                      title: "Complete Ride(April)",
+                      value: "16",
+                      icon: LucideIcons.checkCircle2,
+                      bottomColor: ColorStyle.primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: SummaryCard(
+                      title: "Absent Ride(April)",
+                      value: "02",
+                      icon: LucideIcons.clock4,
+                      bottomColor: ColorStyle.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SummaryCard(
+                      title: "Rating Star",
+                      value: "",
+                      icon: LucideIcons.star,
+                      bottomColor: ColorStyle.primaryColor,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
-              const CustomText(text: 'Order:', fontSize: 24, fontWeight: FontWeight.bold),
-              const SizedBox(height: 12),
-              CustomCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const CustomText(text: "Upcoming Order", fontSize: 16, fontWeight: FontWeight.w600),
-                    const Divider(),
-                    const SizedBox(height: 6),
-                    const CustomText(text: 'Source: Kalakkad', fontSize: 14),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        CustomText(text: 'Destination: Tirunelveli', fontSize: 14),
-                        CustomText(text: '45 km', fontSize: 14, fontWeight: FontWeight.bold),
-                      ],
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "New Upcoming Ride",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 10),
+              RideTile(
+                name: 'Peter Thornton',
+                date: '10 May’25 at 4:10 AM',
+                pickup: '17, Yonge St, Toronto, Canada',
+                drop: '20, Avenue St, Toronto, Canada',
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: const [
+                  CustomText(
+                    text: 'Running Order',
+                    fontSize: 19,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.all(screenWidth * 0.030),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: Colors.grey.shade300, width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorStyle.primaryColor,
+                      offset: const Offset(0, 6),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 20),
-              CustomCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const CustomText(text: 'Running Order', fontSize: 16, fontWeight: FontWeight.w600),
-                    const Divider(),
                     const SizedBox(height: 6),
-                    _buildTimeline(),
-                    const SizedBox(height: 20),
+                    CustomTimelineTile(
+                      title: "START",
+                      time: "15:30, Sep 9, 2018",
+                      icon: Icons.check,
+                      step: 0,
+                      currentStep: tripStep,
+                    ),
+                    CustomTimelineTile(
+                      title: "TRAVELING",
+                      time: "15:45, Sep 9, 2018",
+                      icon: Icons.directions_car,
+                      step: 1,
+                      currentStep: tripStep,
+                    ),
+                    CustomTimelineTile(
+                      title: "COMPLETED",
+                      time: "Estimated: 17:30",
+                      icon: Icons.done_all,
+                      step: 2,
+                      currentStep: tripStep,
+                      isLast: true,
+                    ),
+                    const SizedBox(height: 15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         ElevatedButton(
-                          onPressed: currentStep == 0 ? startTrip : null,
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                          child: const Text('Start Trip',style: TextStyle(color: Colors.white),),
-                        ),
-                        ElevatedButton(
-                          onPressed: currentStep == 1 ? completeTrip : null,
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                          child: const Text('Complete Trip',style: TextStyle(color: Colors.white),),
+                          onPressed:
+                              tripStep < 3
+                                  ? () {
+                                    setState(() {
+                                      if (tripStep == 0) {
+                                        pickupTime = DateTime.now();
+                                        tripStep = 1;
+                                      } else if (tripStep == 1) {
+                                        dropTime = DateTime.now();
+                                        tripStep = 2;
+                                      } else if (tripStep == 2) {
+                                        completeTime = DateTime.now();
+                                        tripStep = 3;
+                                      }
+                                    });
+                                  }
+                                  : null, // Disable when tripStep == 3
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                tripStep < 3
+                                    ? ColorStyle.primaryColor
+                                    : Colors.grey,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: screenWidth * 0.08,
+                              vertical: screenHeight * 0.015,
+                            ),
+                          ),
+                          child: Text(
+                            tripStep == 0
+                                ? 'Pickup Customer'
+                                : tripStep == 1
+                                ? 'Drop Customer'
+                                : tripStep == 2
+                                ? 'Complete Trip'
+                                : 'Trip Completed',
+                            style: const TextStyle(color: Colors.white),
+                          ),
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
+              const SizedBox(height: 20),
+              Row(
+                children: const [
+                  CustomText(
+                    text: 'Month Maintennance',
+                    fontSize: 19,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              MaintenanceScheduleCard(
+                vehicleName: "XUV 500",
+                shopName: "Jayam Auto Works",
+                startingDate: "10-Apr-2025",
+                startingTime: "10:00 AM",
+                maintenanceType: "Oil Change",
+                startingKm: "25600 km",
+              ),
+              SizedBox(height: screenHeight * 0.02),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.grey.shade300, width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorStyle.primaryColor,
+                      // blurRadius: 8,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Maintenance Report',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Buttons Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomBottomSheetButton(
+                          label: 'Edit',
+                          icon: Icons.edit,
+                          bottomSheet: const MaintenanceEdit(),
+                        ),
+                        CustomBottomSheetButton(
+                          label: 'Complete',
+                          icon: Icons.check_circle,
+                          bottomSheet: const MaintenanceComplete(),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+                    const Divider(thickness: 1),
+
+                    const SizedBox(height: 12),
+                    _buildDetailRow('Driver Name', 'John Doe'),
+                    _buildDetailRow('Workshop Name', 'Speed Motors'),
+                    _buildDetailRow('Date & Time', 'Apr 8, 2025 – 10:30 AM'),
+                    _buildDetailRow('Start KM', '12345'),
+                  ],
+                ),
+              ),
+             SizedBox(height: screenHeight * 0.05),
             ],
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            backgroundColor: Colors.white,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            builder: (context) => UnplannedMaintenanceSheet(),
+          );
+        },
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: const Text(
+          'Add Unplanned',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: ColorStyle.primaryColor,
+      ),
     );
   }
 
-  Widget _buildTimeline() {
-    return Column(
+  Widget _buildDetailRow(String title, String value) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 6),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        CustomTimelineTile(
-          title: "ORDERED",
-          time: "15:30, Sep 9, 2018",
-          icon: Icons.check,
-          step: 0,
-          currentStep: currentStep,
-        ),
-        CustomTimelineTile(
-          title: "TRAVELING",
-          time: "15:45, Sep 9, 2018",
-          icon: Icons.directions_car,
-          step: 1,
-          currentStep: currentStep,
-        ),
-        CustomTimelineTile(
-          title: "COMPLETED",
-          time: "Estimated: 17:30",
-          icon: Icons.done_all,
-          step: 2,
-          currentStep: currentStep,
-          isLast: true,
-        ),
+        Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
+        Text(value, style: const TextStyle(color: Colors.black54)),
       ],
-    );
-  }
+    ),
+  );
+}
+
 }

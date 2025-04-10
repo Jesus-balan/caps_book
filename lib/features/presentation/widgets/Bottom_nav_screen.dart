@@ -1,7 +1,8 @@
+import 'package:caps_book/features/config/styles.dart';
 import 'package:caps_book/features/presentation/ui/home/attendance_screen.dart';
-import 'package:caps_book/features/presentation/ui/home/betta_screen.dart';
+import 'package:caps_book/features/presentation/ui/home/rideBookings_screen.dart';
 import 'package:caps_book/features/presentation/ui/home/home_screen.dart';
-import 'package:caps_book/features/presentation/ui/home/profile_screen.dart';
+import 'package:caps_book/features/presentation/ui/home/Incentive_screen.dart';
 import 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 
@@ -15,8 +16,8 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   final List<Widget> _pages = [
     HomeScreen(),
     AttendanceScreen(),
-    OrderScreen(),
-    ProfileScreen(),
+    MyRideScreen(),
+    IncentiveScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -33,14 +34,14 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
         icons: [
           FluidNavBarIcon(icon: Icons.home),
           FluidNavBarIcon(icon: Icons.calendar_month),
-          FluidNavBarIcon(icon: Icons.shopping_cart),
-          FluidNavBarIcon(icon: Icons.person),
+          FluidNavBarIcon(icon: Icons.local_taxi),
+          FluidNavBarIcon(icon: Icons.card_giftcard),
         ],
         onChange: _onItemTapped,
         style: FluidNavBarStyle(
-          barBackgroundColor: Colors.grey[200],
-          iconUnselectedForegroundColor: Colors.black,
-          iconSelectedForegroundColor: Color.fromARGB(255, 13, 71, 161),
+          barBackgroundColor: ColorStyle.primaryColor,
+          iconUnselectedForegroundColor: Colors.white,
+          iconSelectedForegroundColor: Colors.white,
         ),
       ),
     );

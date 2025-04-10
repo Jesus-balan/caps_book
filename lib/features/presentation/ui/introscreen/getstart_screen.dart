@@ -1,3 +1,4 @@
+import 'package:caps_book/features/config/styles.dart';
 import 'package:flutter/material.dart';
 
 class GetStartScreen extends StatelessWidget {
@@ -5,55 +6,62 @@ class GetStartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
+
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: ColorStyle.primaryColor,
       body: Column(
         children: [
+          // Top Car Image
           Expanded(
             child: Stack(
               children: [
                 Positioned(
                   top: 0,
-                  left: -330, // Shift image to the left
+                  left: -width * 0.7,
                   child: Image.asset(
-                    'assets/images/car-img.png', // Ensure image is added
-                    width: MediaQuery.of(context).size.width * 1.8,
+                    'assets/images/car-img.png',
+                    width: width * 1.7,
                     fit: BoxFit.cover,
                   ),
                 ),
               ],
             ),
           ),
+
+          // Text & Button Section
           Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: EdgeInsets.all(width * 0.05),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Premium cars.",
+                  "Drive & Earn.",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 28,
+                    fontSize: width * 0.07,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
                 Text(
-                  "Enjoy the luxury",
+                  "Be your own boss",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 28,
+                    fontSize: width * 0.07,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: height * 0.015),
                 Text(
-                  "Premium & eminence vehicle day to day rental. Experience the rush at a lower cost.",
+                  "Join our platform, accept rides with ease, track earnings, and drive on your schedule. Start earning today!",
                   style: TextStyle(
                     color: Colors.white70,
-                    fontSize: 14,
+                    fontSize: width * 0.035,
                   ),
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: height * 0.04),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -65,19 +73,19 @@ class GetStartScreen extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      padding: EdgeInsets.symmetric(vertical: 15),
+                      padding: EdgeInsets.symmetric(vertical: height * 0.02),
                     ),
                     child: Text(
-                      "Let's Go",
+                      "Get Started",
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 16,
+                        fontSize: width * 0.045,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: height * 0.03),
               ],
             ),
           ),
