@@ -1,7 +1,7 @@
 import 'package:caps_book/features/config/styles.dart';
-import 'package:caps_book/features/presentation/blocs/myride/myride_bloc.dart';
-import 'package:caps_book/features/presentation/blocs/myride/myride_event.dart';
-import 'package:caps_book/features/presentation/blocs/myride/myride_state.dart';
+import 'package:caps_book/features/presentation/blocs/ridebooking/myride_bloc.dart';
+import 'package:caps_book/features/presentation/blocs/ridebooking/myride_event.dart';
+import 'package:caps_book/features/presentation/blocs/ridebooking/myride_state.dart';
 import 'package:caps_book/features/presentation/ui/bookingdetails/booking_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

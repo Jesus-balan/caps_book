@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'package:caps_book/features/core/network/hive_service.dart';
-import 'package:caps_book/features/data/model/myride_model.dart';
+import 'package:caps_book/features/data/model/rideBooking_model.dart';
 import 'package:http/http.dart' as http;
 
 class RideRepository {
-
-  
 
   RideRepository();
 
