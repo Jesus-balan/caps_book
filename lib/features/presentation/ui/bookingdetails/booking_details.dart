@@ -1,16 +1,77 @@
-import 'package:caps_book/features/presentation/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 
+
+import 'package:caps_book/features/config/styles.dart';
+import 'package:caps_book/features/presentation/widgets/custom_text.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 class RideSummaryScreen extends StatelessWidget {
-  const RideSummaryScreen({super.key});
+  final String customerName;
+  final DateTime dateTime;
+  final String pickupAddress;
+  final String dropAddress;
+  final String bookingType;
+  final String vehicleName;
+  final String vehicleNumber;
+  final String bookingStatus;
+  final String customerPhone;
+  final String startKm;
+ final String rideId; // The ID to be passed to the API
+
+
+  
+
+  const RideSummaryScreen({
+    super.key,
+    required this.customerName,
+    required this.dateTime,
+    required this.pickupAddress,
+    required this.dropAddress,
+    required this.bookingType,
+    required this.vehicleName,
+    required this.vehicleNumber,
+    required this.bookingStatus,
+    required this.customerPhone,
+    required this.startKm,
+    required this.rideId,
+  });
+
+ Future<void> _startTrip(BuildContext context) async {
+  final String apiUrl = 'https://h5r5msdk-1111.inc1.devtunnels.ms/driver/booking/$rideId/trip-start/';
+
+  try {
+    final response = await http.patch(
+      Uri.parse(apiUrl),
+      body: {}, // Include body only if required
+    );
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Trip started successfully")),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to start trip. Code: ${response.statusCode}")),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error: $e")),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
+    final String date = "${dateTime.day} ${_getMonthName(dateTime.month)} ${dateTime.year}";
+    final String time = "${_formatTime(dateTime)}";
+
     return Scaffold(
       backgroundColor: const Color(0xffF5F5F5),
       appBar: AppBar(
         title: const Text("Ride Summary", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.deepPurpleAccent,
+        backgroundColor: ColorStyle.primaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
@@ -27,25 +88,21 @@ class RideSummaryScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Rider Info
                   Row(
                     children: [
-                     
                       const SizedBox(width: 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text("Jonathan Higgins", style: TextStyle(fontWeight: FontWeight.bold)),
-                          SizedBox(height: 4),
+                        children: [
+                          Text(customerName, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 4),
                         ],
                       ),
                       const Spacer(),
-                      const Text("15 Feb'25, 10:15 AM", style: TextStyle(fontSize: 12)),
+                      Text("$date, $time", style: const TextStyle(fontSize: 12)),
                     ],
                   ),
                   const SizedBox(height: 12),
-
-                  // Ride Path Image
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.asset(
@@ -70,24 +127,20 @@ class RideSummaryScreen extends StatelessWidget {
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Row(
                     children: [
-                      Icon(Icons.location_on, color: Colors.green),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Text("17, Yonge St, Toronto, Canada"),
-                      ),
+                      const Icon(Icons.location_on, color: Colors.green),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text(pickupAddress)),
                     ],
                   ),
-                  Divider(),
+                  const Divider(),
                   Row(
                     children: [
-                      Icon(Icons.location_on, color: Colors.red),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Text("20, Yonge St, Toronto, Canada"),
-                      ),
+                      const Icon(Icons.location_on, color: Colors.red),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text(dropAddress)),
                     ],
                   ),
                 ],
@@ -96,12 +149,13 @@ class RideSummaryScreen extends StatelessWidget {
 
             const SizedBox(height: 12),
             Row(crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomText(text: 'Customer Details', fontSize: 20,),
+              children: const [
+                CustomText(text: 'Customer Details', fontSize: 20),
               ],
             ),
             const SizedBox(height: 12),
-            // Bill Section
+
+            // Details Section
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -111,30 +165,29 @@ class RideSummaryScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 5),
-                  _billRow("Customer Name", "Jonathan Higgins"),
-                  _billRow("Customer Number", "+1 98765 43210"),
-                  _billRow("Vehicle Name", "Toyota Camry"),
-                  _billRow("Vehicle Number", "TN 01 AB 1234"),
-                  _billRow("Starting Date", "15 Feb 2025"),
-                  _billRow("Start KM", "18452 km"),
-                  _billRow("Starting Time", "10:15 AM"),
-                  _billRow("Pickup Address", "17, Yonge St, Toronto, Canada"),
-                  _billRow("Drop Address", "20, Yonge St, Toronto, Canada"),
+                  _billRow("Customer Name", customerName),
+                  _billRow("Customer Number", customerPhone),
+                  _billRow("Vehicle Name", vehicleName),
+                  _billRow("Vehicle Number", vehicleNumber),
+                  _billRow("Starting Date", date),
+                  _billRow("Starting Time", time),
+                  _billRow("Start KM", startKm),
+                  _billRow("Booking Type", bookingType),
+                  _billRow("Booking Status", bookingStatus),
+                  _billRow("Pickup Address", pickupAddress),
+                  _billRow("Drop Address", dropAddress),
                 ],
               ),
             ),
             const SizedBox(height: 24),
 
             // Start Trip Button
-            SizedBox(
+             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  // Handle Start Trip
-                },
+                onPressed: () => _startTrip(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurpleAccent,
+                  backgroundColor: ColorStyle.primaryColor,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
@@ -147,7 +200,7 @@ class RideSummaryScreen extends StatelessWidget {
     );
   }
 
-  Widget _billRow(String label, String value, {Color? color, bool isBold = false}) {
+  static Widget _billRow(String label, String value, {Color? color, bool isBold = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -155,14 +208,33 @@ class RideSummaryScreen extends StatelessWidget {
         children: [
           Text(label,
               style: TextStyle(fontSize: 14, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
-          Text(value,
-              style: TextStyle(
-                fontSize: 14,
-                color: color ?? Colors.black,
-                fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-              )),
+          Flexible(
+            child: Text(value,
+                textAlign: TextAlign.end,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: color ?? Colors.black,
+                  fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+                )),
+          ),
         ],
       ),
     );
+  }
+
+  String _formatTime(DateTime dt) {
+    int hour = dt.hour;
+    String period = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12 == 0 ? 12 : hour % 12;
+    String minute = dt.minute.toString().padLeft(2, '0');
+    return "$hour:$minute $period";
+  }
+
+  String _getMonthName(int month) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return months[month - 1];
   }
 }

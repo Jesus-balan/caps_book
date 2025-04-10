@@ -1,11 +1,12 @@
-part of 'myride_bloc.dart';
+import 'package:equatable/equatable.dart';
 
-@immutable
-abstract class MyrideEvent {}
+abstract class MyrideEvent extends Equatable {
+  const MyrideEvent();
 
-class FetchBookingEvent extends MyrideEvent{}
+  @override
+  List<Object> get props => [];
+}
 
-class SelectCategory extends MyrideEvent {
-  final String category;
-  SelectCategory(this.category);
+class FetchMyRides extends MyrideEvent {
+  const FetchMyRides(); // No params
 }

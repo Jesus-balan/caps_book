@@ -1,7 +1,9 @@
 import 'package:caps_book/features/config/routes.dart';
 import 'package:caps_book/features/data/repositories/login_repository.dart';
+import 'package:caps_book/features/data/repositories/ride_boking_repository.dart';
 import 'package:caps_book/features/presentation/blocs/login-auth/bloc/login_bloc.dart';
 import 'package:caps_book/features/presentation/blocs/myride/myride_bloc.dart';
+import 'package:caps_book/features/presentation/blocs/myride/myride_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -10,12 +12,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter(); // Hive init
 
+  final rideRepository = RideRepository(); // <-- define it here
+
   runApp(
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => LoginBloc(LoginRepository())),
         BlocProvider(
-          create: (context) => MyrideBloc()..add(FetchBookingEvent()),
+          create: (context) => MyrideBloc(rideRepository)..add(const FetchMyRides()),
         ),
       ],
       child: const MyApp(),

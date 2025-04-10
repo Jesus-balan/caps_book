@@ -27,9 +27,9 @@ class AppRoutes {
       case '/home':
         page = const HomeScreen();
         break;
-      case '/ridesummary':
-        page = const RideSummaryScreen();
-        break;
+      // case '/ridesummary':
+      //   page = RideSummaryScreen();
+      //   break;
       default:
         page = const Scaffold(
           body: Center(child: Text('Page Not Found')),

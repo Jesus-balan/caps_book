@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 class RideCard extends StatelessWidget {
   final String customerName;
-  final String dateTime;
+  final String dateTime; // Accepts formatted string
   final String vehicleName;
   final String vehicleNumber;
   final String pickupLocation;
@@ -37,7 +37,7 @@ class RideCard extends StatelessWidget {
     String cleanStatus = status.trim().toLowerCase();
 
     // Only allow "pending ride" or "completed ride"
-    if (cleanStatus != "pending ride" && cleanStatus != "completed ride") {
+    if (cleanStatus != "Ordered" && cleanStatus != "Completed") {
       return const SizedBox(); // Skip rendering
     }
 
@@ -145,12 +145,12 @@ class RideCard extends StatelessWidget {
               onPressed: cleanStatus == "pending ride" ? onPickup : null,
               icon: const Icon(Icons.local_taxi, color: Colors.white),
               label: Text(
-                cleanStatus == "pending ride" ? "Pickup Customer" : "Completed",
+                cleanStatus == "Ordered" ? "Pickup Customer" : "Completed",
                 style: const TextStyle(fontSize: 16),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor:
-                    cleanStatus == "pending ride" ? Colors.deepPurple : Colors.green,
+                    cleanStatus == "Ordered" ? Colors.deepPurple : Colors.green,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 14),

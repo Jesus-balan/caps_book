@@ -1,8 +1,12 @@
 import 'package:caps_book/features/config/styles.dart';
+import 'package:caps_book/features/data/model/myride_model.dart';
 import 'package:caps_book/features/presentation/blocs/myride/myride_bloc.dart';
-import 'package:caps_book/features/presentation/widgets/ridecard_widget.dart';
+import 'package:caps_book/features/presentation/blocs/myride/myride_event.dart';
+import 'package:caps_book/features/presentation/blocs/myride/myride_state.dart';
+import 'package:caps_book/features/presentation/ui/bookingdetails/booking_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 class MyRideScreen extends StatefulWidget {
   @override
@@ -10,10 +14,18 @@ class MyRideScreen extends StatefulWidget {
 }
 
 class _MyRideScreenState extends State<MyRideScreen> {
+  int selectedIndex = 0;
+
   @override
   void initState() {
     super.initState();
-    context.read<MyrideBloc>().add(FetchBookingEvent());
+    Future.delayed(Duration.zero, () {
+      context.read<MyrideBloc>().add(const FetchMyRides());
+    });
+  }
+
+  String formatDateTime(DateTime dateTime) {
+    return DateFormat('dd MMM yyyy, hh:mm a').format(dateTime);
   }
 
   @override
@@ -36,7 +48,7 @@ class _MyRideScreenState extends State<MyRideScreen> {
         ],
         automaticallyImplyLeading: false,
         backgroundColor: ColorStyle.primaryColor,
-        title: Text("My Rides", style: TextStyle(color: Colors.white)),
+        title: const Text("My Rides", style: TextStyle(color: Colors.white)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -44,118 +56,201 @@ class _MyRideScreenState extends State<MyRideScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 15),
-            // Categories Section
-            BlocBuilder<MyrideBloc, MyrideState>(
-              builder: (context, state) {
-                String selectedCategory = "All";
-                if (state is MyrideLoaded) {
-                  selectedCategory = state.bookingCategory;
-                }
-                return Column(
-                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      height: 50,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          _categoryButton("Pending Ride", selectedCategory),
-                          _categoryButton("Completed Ride", selectedCategory),
-                        ],
+            // Buttons
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  // Ordered
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() => selectedIndex = 0);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: selectedIndex == 0 ? Colors.blue : Colors.grey[300],
+                        foregroundColor: selectedIndex == 0 ? Colors.white : Colors.black,
                       ),
+                      child: const Text('Ordered'),
                     ),
-                  ],
-                );
-              },
+                  ),
+                  const SizedBox(width: 10),
+                  // Completed
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() => selectedIndex = 1);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: selectedIndex == 1 ? Colors.blue : Colors.grey[300],
+                        foregroundColor: selectedIndex == 1 ? Colors.white : Colors.black,
+                      ),
+                      child: const Text('Complete'),
+                    ),
+                  ),
+                ],
+              ),
             ),
+            const SizedBox(height: 20),
 
-            const SizedBox(height: 10),
-
-            // Product List
+            // Bloc UI
             BlocBuilder<MyrideBloc, MyrideState>(
               builder: (context, state) {
-                if (state is MyrideLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (state is MyrideError) {
-                  return const Center(
-                    child: Text(
-                      "Failed to load bookings",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  );
-                }
                 if (state is MyrideLoaded) {
-                  if (state.rideBookings.isEmpty) {
-                    return const Center(child: Text("No bookings available"));
+                  final filteredBookings = state.rideBookings.where((booking) {
+                    return selectedIndex == 0
+                        ? booking.booking_status == 'Ordered'
+                        : booking.booking_status == 'Completed';
+                  }).toList();
+
+                  if (filteredBookings.isEmpty) {
+                    return Center(
+                      child: Text(
+                        selectedIndex == 0 ? "No upcoming bookings" : "No completed bookings",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    );
                   }
 
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: state.rideBookings.length,
+                    itemCount: filteredBookings.length,
                     itemBuilder: (context, index) {
-                      final booking = state.rideBookings[index];
-
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: RideCard(
-                          vehicleName: booking.vehicleName,
-                          vehicleNumber: booking.vehicleNumber,
-                          customerName: booking.customerName,
-                          dateTime: booking.dateTime.toString(),
-                          pickupLocation: booking.pickupAddress,
-                          dropLocation: booking.dropAddress,
-                          onPickup: () {
-                            // only for Pending
-                            if (state.bookingCategory == "Pending Ride") {
-                              Navigator.pushNamed(context, '/ridesummary');
-                            }
-                          },
-                          status:
-                              state.bookingCategory, // pass current category
+                      final booking = filteredBookings[index];
+                      return Container(
+                        constraints: const BoxConstraints(maxWidth: 400),
+                        margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                        padding: const EdgeInsets.all(18),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: Colors.grey.shade300, width: 1.5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.deepPurpleAccent.withOpacity(0.15),
+                              blurRadius: 8,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Top: Customer Name & Date
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  booking.customerName ?? "No Name",
+                                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  formatDateTime(booking.dateTime),
+                                  style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            // Vehicle Info
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  booking.vehicleName ?? "No Vehicle",
+                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  booking.vehicleNumber ?? "No Number",
+                                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Divider(color: Colors.grey.shade300),
+                            const SizedBox(height: 12),
+                            // Pickup
+                            Row(
+                              children: [
+                                const Icon(Icons.arrow_upward, color: Colors.green, size: 20),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    booking.pickupAddress ?? "No Pickup",
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            // Drop
+                            Row(
+                              children: [
+                                const Icon(Icons.arrow_downward, color: Colors.red, size: 20),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    booking.dropAddress ?? "No Drop",
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            // Button
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                onPressed: booking.booking_status?.toLowerCase() == "ordered"
+                                    ? () {
+                                        Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => RideSummaryScreen(
+                                          customerName: booking.customerName ?? '',
+                                          dateTime: booking.dateTime,
+                                          pickupAddress: booking.pickupAddress ?? '',
+                                          dropAddress: booking.dropAddress ?? '',
+                                          bookingType: booking.bookingType ?? '',
+                                          vehicleName: booking.vehicleName ?? '',
+                                          vehicleNumber: booking.vehicleNumber ?? '',
+                                          bookingStatus: booking.booking_status ?? '',
+                                          customerPhone: booking.customerPhone ?? '',
+                                          startKm: booking.startKm ?? '',
+                                          rideId: booking.uuid ?? '',
+                                        ),
+                                      ),
+                                    );
+                                      }
+                                    : null,
+                                icon: const Icon(Icons.local_taxi, color: Colors.white),
+                                label: Text(
+                                  booking.booking_status?.toLowerCase() == "ordered"
+                                      ? "Pickup Customer"
+                                      : "Completed",
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: booking.booking_status?.toLowerCase() == "ordered"
+                                      ? Colors.deepPurple
+                                      : Colors.green,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     },
                   );
                 }
-                return const SizedBox();
+                return const Center(child: CircularProgressIndicator());
               },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Category Button Widget
-  Widget _categoryButton(String category, String selectedCategory) {
-    return GestureDetector(
-      onTap: () {
-        context.read<MyrideBloc>().add(SelectCategory(category));
-      },
-      child: Container(
-        margin: const EdgeInsets.only(right: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        decoration: BoxDecoration(
-          color:
-              selectedCategory == category
-                  ? Colors.deepPurpleAccent
-                  : Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.black12),
-        ),
-        child: Row(
-          children: [
-            const SizedBox(width: 5),
-            Text(
-              category,
-              style: TextStyle(
-                fontSize: 14,
-                color:
-                    selectedCategory == category ? Colors.white : Colors.black,
-                fontWeight: FontWeight.w500,
-              ),
             ),
           ],
         ),
