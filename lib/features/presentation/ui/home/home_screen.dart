@@ -46,7 +46,9 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.notifications),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, '/profile');
+            },
             iconSize: screenWidth * 0.065,
             icon: const Icon(Icons.person),
           ),
@@ -61,22 +63,22 @@ class _HomeScreenState extends State<HomeScreen> {
               // Summary Cards
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: const [
+                children: [
                   Expanded(
                     child: SummaryCard(
                       title: "Total Earnings(April)",
                       value: "\$3100",
                       icon: LucideIcons.wallet,
-                      bottomColor: Colors.deepPurpleAccent,
+                      bottomColor: ColorStyle.primaryColor,
                     ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: SummaryCard(
                       title: "Complete Ride(April)",
                       value: "16",
                       icon: LucideIcons.checkCircle2,
-                      bottomColor: Colors.deepPurpleAccent,
+                      bottomColor: ColorStyle.primaryColor,
                     ),
                   ),
                 ],
@@ -84,22 +86,22 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: const [
+                children: [
                   Expanded(
                     child: SummaryCard(
                       title: "Absent Ride(April)",
                       value: "02",
                       icon: LucideIcons.clock4,
-                      bottomColor: Colors.deepPurpleAccent,
+                      bottomColor: ColorStyle.primaryColor,
                     ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: SummaryCard(
                       title: "Rating Star",
                       value: "",
                       icon: LucideIcons.star,
-                      bottomColor: Colors.deepPurpleAccent,
+                      bottomColor: ColorStyle.primaryColor,
                     ),
                   ),
                 ],
@@ -136,10 +138,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(color: Colors.grey.shade300, width: 1.5),
-                  boxShadow: const [
+                  boxShadow: [
                     BoxShadow(
-                      color: Colors.deepPurpleAccent,
-                      offset: Offset(0, 6),
+                      color: ColorStyle.primaryColor,
+                      offset: const Offset(0, 6),
                     ),
                   ],
                 ),
@@ -194,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 tripStep < 3
-                                    ? Colors.deepPurpleAccent
+                                    ? ColorStyle.primaryColor
                                     : Colors.grey,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -248,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   border: Border.all(color: Colors.grey.shade300, width: 1.5),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.deepPurpleAccent,
+                      color: ColorStyle.primaryColor,
                       // blurRadius: 8,
                       offset: const Offset(0, 6),
                     ),
@@ -316,7 +318,7 @@ class _HomeScreenState extends State<HomeScreen> {
           'Add Unplanned',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.deepPurpleAccent,
+        backgroundColor: ColorStyle.primaryColor,
       ),
     );
   }

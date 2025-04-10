@@ -44,6 +44,8 @@ dependencies:
   hive:
   hive_flutter:
   geolocator:
+  equatable:
+  http:
   geolocator_android:
   flutter_slidable:
   lucide_icons:

@@ -1,3 +1,4 @@
+import 'package:caps_book/features/config/styles.dart';
 import 'package:caps_book/features/presentation/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +11,7 @@ class RideSummaryScreen extends StatelessWidget {
       backgroundColor: const Color(0xffF5F5F5),
       appBar: AppBar(
         title: const Text("Ride Summary", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.deepPurpleAccent,
+        backgroundColor: ColorStyle.primaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
@@ -134,7 +135,7 @@ class RideSummaryScreen extends StatelessWidget {
                   // Handle Start Trip
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurpleAccent,
+                  backgroundColor: ColorStyle.primaryColor,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),

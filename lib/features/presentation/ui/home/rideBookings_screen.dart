@@ -1,5 +1,5 @@
 import 'package:caps_book/features/config/styles.dart';
-import 'package:caps_book/features/presentation/blocs/myride/myride_bloc.dart';
+import 'package:caps_book/features/presentation/blocs/ridebooking/myride_bloc.dart';
 import 'package:caps_book/features/presentation/widgets/ridecard_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -140,7 +140,7 @@ class _MyRideScreenState extends State<MyRideScreen> {
         decoration: BoxDecoration(
           color:
               selectedCategory == category
-                  ? Colors.deepPurpleAccent
+                  ? ColorStyle.primaryColor
                   : Colors.white,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: Colors.black12),

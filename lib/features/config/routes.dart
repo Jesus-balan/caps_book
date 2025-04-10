@@ -1,5 +1,8 @@
 import 'package:caps_book/features/presentation/ui/auth/login_screen.dart';
+import 'package:caps_book/features/presentation/ui/bookingdetails/betta_history.dart';
+import 'package:caps_book/features/presentation/ui/bookingdetails/expense_history.dart';
 import 'package:caps_book/features/presentation/ui/bookingdetails/booking_details.dart';
+import 'package:caps_book/features/presentation/ui/bookingdetails/customer_profile.dart';
 import 'package:caps_book/features/presentation/ui/home/home_screen.dart';
 import 'package:caps_book/features/presentation/ui/introscreen/getstart_screen.dart';
 import 'package:caps_book/features/presentation/ui/introscreen/splash_screen.dart';
@@ -29,6 +32,15 @@ class AppRoutes {
         break;
       case '/ridesummary':
         page = const RideSummaryScreen();
+        break;
+         case '/expenselist':
+        page =  ExpenseListScreen();
+        break;
+         case '/bettalist':
+        page =  BettaListScreen();
+        break;
+        case '/profile':
+        page = ProfilePage();
         break;
       default:
         page = const Scaffold(

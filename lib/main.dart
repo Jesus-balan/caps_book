@@ -1,7 +1,8 @@
 import 'package:caps_book/features/config/routes.dart';
+import 'package:caps_book/features/config/styles.dart';
 import 'package:caps_book/features/data/repositories/login_repository.dart';
 import 'package:caps_book/features/presentation/blocs/login-auth/bloc/login_bloc.dart';
-import 'package:caps_book/features/presentation/blocs/myride/myride_bloc.dart';
+import 'package:caps_book/features/presentation/blocs/ridebooking/myride_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
       title: 'Caps Booking',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: ColorStyle.primaryColor),
         useMaterial3: true,
       ),
       initialRoute: '/',

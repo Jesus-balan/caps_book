@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:caps_book/features/data/model/myride_model.dart';
+import 'package:caps_book/features/data/model/rideBooking_model.dart';
 import 'package:meta/meta.dart';
 
 part 'myride_event.dart';
