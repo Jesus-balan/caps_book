@@ -232,7 +232,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             shape: BoxShape.circle,
           ),
           selectedDecoration: BoxDecoration(
-            color: isPunchedIn ? Colors.green : Colors.red,
+            color: isPunchedIn ?  Colors.red : Colors.green,
             shape: BoxShape.circle,
           ),
           selectedTextStyle: const TextStyle(
@@ -379,6 +379,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -387,6 +389,20 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         backgroundColor: ColorStyle.primaryColor,
         foregroundColor: Colors.white,
         elevation: 2,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            iconSize: screenWidth * 0.065,
+            icon: const Icon(Icons.notifications, color: Colors.white,),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/profile');
+            },
+            iconSize: screenWidth * 0.065,
+            icon: const Icon(Icons.person, color: Colors.white,),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -408,7 +424,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
-                              color: Colors.white,
+                              color: ColorStyle.accentColor,
                               strokeWidth: 2,
                             ),
                           )
@@ -427,7 +443,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
-                        isPunchedIn ? Colors.green : ColorStyle.primaryColor,
+                        isPunchedIn ? Colors.red : ColorStyle.primaryColor,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),

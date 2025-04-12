@@ -18,6 +18,20 @@ class IncentiveScreen extends StatelessWidget {
           backgroundColor: ColorStyle.primaryColor,
           foregroundColor: Colors.white,
           elevation: 2,
+          actions: [
+          IconButton(
+            onPressed: () {},
+            iconSize: screenWidth * 0.065,
+            icon: const Icon(Icons.notifications, color: Colors.white,),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/profile');
+            },
+            iconSize: screenWidth * 0.065,
+            icon: const Icon(Icons.person, color: Colors.white,),
+          ),
+        ],
         ),
         body: Padding(
           padding: EdgeInsets.all(screenWidth * 0.04),
@@ -37,7 +51,7 @@ class IncentiveScreen extends StatelessWidget {
                           title: "Expense history",
                           value: "Expense",
                           icon: LucideIcons.wallet,
-                          bottomColor: Colors.deepPurpleAccent,
+                          bottomColor: ColorStyle.accentColor,
                         ),
                       ),
                     ),
@@ -51,7 +65,7 @@ class IncentiveScreen extends StatelessWidget {
                           title: "Betta History",
                           value: "Betta",
                           icon: LucideIcons.history,
-                          bottomColor: Colors.deepPurpleAccent,
+                          bottomColor: ColorStyle.accentColor,
                         ),
                       ),
                     ),

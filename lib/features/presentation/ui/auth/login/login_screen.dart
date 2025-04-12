@@ -162,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child:
                                     state is LoginLoading
                                         ? CircularProgressIndicator(
-                                          color: Colors.white,
+                                          color: ColorStyle.primaryColor,
                                         )
                                         : Text(
                                           "Login",

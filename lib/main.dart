@@ -6,16 +6,21 @@ import 'package:caps_book/features/presentation/blocs/login-auth/bloc/login_bloc
 import 'package:caps_book/features/presentation/blocs/ridebooking/myride_bloc.dart';
 import 'package:caps_book/features/presentation/blocs/ridebooking/myride_event.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
+
+  // ✅ Now safe to lock orientation
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
+
   await Hive.initFlutter(); // Hive init
-
   final rideRepository = RideRepository(); // <-- define it here
-
-  
   await Hive.openBox('attendanceBox'); // Add this line
   runApp(  
     MultiBlocProvider(

@@ -1,9 +1,8 @@
 import 'package:caps_book/features/config/styles.dart';
-import 'package:caps_book/features/presentation/widgets/custom_add_button.dart';
+import 'package:caps_book/features/data/repositories/today_maintenance_repository.dart';
 import 'package:caps_book/features/presentation/widgets/custom_text.dart';
 import 'package:caps_book/features/presentation/widgets/custom_timeline.dart';
-import 'package:caps_book/features/presentation/widgets/maintenanace_edit.dart';
-import 'package:caps_book/features/presentation/widgets/maintenance_complete.dart';
+import 'package:caps_book/features/presentation/widgets/maintenance_report.dart';
 import 'package:caps_book/features/presentation/widgets/maintenance_schedule_card.dart';
 import 'package:caps_book/features/presentation/widgets/ride_tile_widget.dart';
 import 'package:caps_book/features/presentation/widgets/summary_card.dart';
@@ -23,6 +22,22 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime? pickupTime;
   DateTime? dropTime;
   DateTime? completeTime;
+
+  final MaintenanceRepository repository = MaintenanceRepository();
+
+  @override
+  void initState() {
+    super.initState();
+    _callTodayMaintenanceAPI();
+  }
+
+  void _callTodayMaintenanceAPI() async {
+    try {
+      await repository.fetchMaintenanceList();
+    } catch (e) {
+      print("Error calling maintenance API: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -222,80 +237,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              Row(
-                children: const [
-                  CustomText(
-                    text: 'Month Maintennance',
-                    fontSize: 19,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              MaintenanceScheduleCard(
-                vehicleName: "XUV 500",
-                shopName: "Jayam Auto Works",
-                startingDate: "10-Apr-2025",
-                startingTime: "10:00 AM",
-                maintenanceType: "Oil Change",
-                startingKm: "25600 km",
-              ),
+              SizedBox(height: 25),
+              MaintenanceScheduleCard(),
               SizedBox(height: screenHeight * 0.02),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade300, width: 1.5),
-                  boxShadow: [
-                    BoxShadow(
-                      color: ColorStyle.primaryColor,
-                      // blurRadius: 8,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Maintenance Report',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Buttons Row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CustomBottomSheetButton(
-                          label: 'Edit',
-                          icon: Icons.edit,
-                          bottomSheet: const MaintenanceEdit(),
-                        ),
-                        CustomBottomSheetButton(
-                          label: 'Complete',
-                          icon: Icons.check_circle,
-                          bottomSheet: const MaintenanceComplete(),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 16),
-                    const Divider(thickness: 1),
-
-                    const SizedBox(height: 12),
-                    _buildDetailRow('Driver Name', 'John Doe'),
-                    _buildDetailRow('Workshop Name', 'Speed Motors'),
-                    _buildDetailRow('Date & Time', 'Apr 8, 2025 – 10:30 AM'),
-                    _buildDetailRow('Start KM', '12345'),
-                  ],
-                ),
-              ),
+              MaintenanceReport(),
              SizedBox(height: screenHeight * 0.05),
             ],
           ),
@@ -322,18 +267,5 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  Widget _buildDetailRow(String title, String value) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 6),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-        Text(value, style: const TextStyle(color: Colors.black54)),
-      ],
-    ),
-  );
-}
 
 }

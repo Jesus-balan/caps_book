@@ -1,6 +1,4 @@
 import 'package:caps_book/features/config/styles.dart';
-import 'package:caps_book/features/presentation/widgets/common_dropdown.dart';
-import 'package:caps_book/features/presentation/widgets/common_input_field.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -35,10 +33,6 @@ class _MaintenanceCompleteState extends State<MaintenanceComplete> {
 
   // Selected dropdown values
   String? enquiryStatus;
-  final TextEditingController driverNameController = TextEditingController();
-  final TextEditingController workshopNameController = TextEditingController();
-  final TextEditingController dateController = TextEditingController();
-  final TextEditingController startKmController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -67,22 +61,6 @@ class _MaintenanceCompleteState extends State<MaintenanceComplete> {
                 icon: Icon(Icons.close),
               ),
             ],
-          ),
-
-          const SizedBox(height: 15),
-          /// Cost Field
-          CommonTextField(
-            label: 'End KM',
-            controller: startKmController,
-            validator: fieldValidator,
-          ),
-          const SizedBox(height: 15),
-          CommonDropdownField(
-            label: 'Enquiry Status',
-            items: ['Completed', 'In-Progress'],
-            value: enquiryStatus,
-            onChanged: (val) => setState(() => enquiryStatus = val),
-            validator: (val) => val == null ? 'Please select status' : null,
           ),
           const SizedBox(height: 15),
             InkWell(
@@ -120,7 +98,16 @@ class _MaintenanceCompleteState extends State<MaintenanceComplete> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                     // You can validate here and upload the file
+                      if (selectedFile == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Please upload a bill")),
+                        );
+                      } else {
+                        // Submit logic here
+                      }
+                  },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),

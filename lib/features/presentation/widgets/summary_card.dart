@@ -1,3 +1,4 @@
+import 'package:caps_book/features/config/styles.dart';
 import 'package:flutter/material.dart';
 class SummaryCard extends StatelessWidget {
   final String title;
@@ -29,7 +30,7 @@ class SummaryCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, size: 20, color: const Color.fromARGB(255, 148, 7, 204)),
+                Icon(icon, size: 20, color: ColorStyle.primaryColor),
                 const Spacer(),
                 Text(
                   value,

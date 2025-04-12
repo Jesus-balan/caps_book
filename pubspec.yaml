@@ -42,6 +42,7 @@ dependencies:
   flutter_bloc:
   dio:
   hive:
+  shimmer:
   hive_flutter:
   geolocator:
   equatable:

@@ -1,5 +1,6 @@
 import 'package:caps_book/features/config/styles.dart';
 import 'package:caps_book/features/presentation/widgets/common_datefield.dart';
+import 'package:caps_book/features/presentation/widgets/common_dropdown.dart';
 import 'package:caps_book/features/presentation/widgets/common_input_field.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,10 @@ class _UnplannedMaintenanceSheetState
     print("No file selected");
   }
 }
+
+  // Selected dropdown values
+  String? vehicleName;
+  String? WorkshopName;
 
   // Controllers
   final TextEditingController vehicleNameController = TextEditingController();
@@ -76,17 +81,17 @@ class _UnplannedMaintenanceSheetState
             const SizedBox(height: 10),
 
             /// Form Fields
-            CommonTextField(
-              label: 'Vehicle Name',
-              controller: vehicleNameController,
-              validator: fieldValidator,
+            CommonDropdownField(
+              label: "Vehicle Name", items: ['None', 'r15', 'honda'], 
+             onChanged: (val) => setState(() => vehicleName = val),
+            validator: (val) => val == null ? 'Please select status' : null,
             ),
             const SizedBox(height: 10),
 
-            CommonTextField(
-              label: 'Workshop Name',
-              controller: workShopNameController,
-              validator: fieldValidator,
+             CommonDropdownField(
+              label: "Workshop Name", items: ['None','bajaj', 'yamaha', 'hero'], 
+             onChanged: (val) => setState(() => WorkshopName = val),
+            validator: (val) => val == null ? 'Please select status' : null,
             ),
             const SizedBox(height: 10),
 
@@ -96,44 +101,19 @@ class _UnplannedMaintenanceSheetState
               validator: fieldValidator,
             ),
             const SizedBox(height: 10),
+
+            CommonTextField(
+              label: 'End Km',
+              controller: endKmController,
+              validator: fieldValidator,
+            ),
+            const SizedBox(height: 10),
             CommonDatePickerField(
                 label: 'Start Date', controller: startDateController),
             const SizedBox(height: 10),
-            /// 📎 Bill Upload Field
-            Text(
-              'Issue photo',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
-            InkWell(
-              onTap: pickFile,
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 14, horizontal: 15),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade400),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        selectedFile != null
-                            ? selectedFile!.name
-                            : 'Choose a file',
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                    Icon(Icons.upload_file, color: Colors.grey),
-                  ],
-                ),
-              ),
-            ),
+            CommonDatePickerField(
+                label: 'End Date', controller: endDateController),
             const SizedBox(height: 25),
-
             /// Submit Button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -143,14 +123,7 @@ class _UnplannedMaintenanceSheetState
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      // You can validate here and upload the file
-                      if (selectedFile == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Please upload a bill")),
-                        );
-                      } else {
-                        // Submit logic here
-                      }
+                     
                     },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(

@@ -2,7 +2,7 @@ import 'package:caps_book/features/config/styles.dart';
 import 'package:caps_book/features/presentation/blocs/ridebooking/myride_bloc.dart';
 import 'package:caps_book/features/presentation/blocs/ridebooking/myride_event.dart';
 import 'package:caps_book/features/presentation/blocs/ridebooking/myride_state.dart';
-import 'package:caps_book/features/presentation/ui/bookingdetails/booking_details.dart';
+import 'package:caps_book/features/presentation/ui/Details/booking_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -29,20 +29,25 @@ class _MyRideScreenState extends State<MyRideScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
-        actions: [
+       actions: [
           IconButton(
             onPressed: () {},
-            iconSize: 25,
-            icon: const Icon(Icons.notifications, color: Colors.white),
+            iconSize: screenWidth * 0.065,
+            icon: const Icon(Icons.notifications, color: Colors.white,),
           ),
           IconButton(
-            onPressed: () {},
-            iconSize: 25,
-            icon: const Icon(Icons.person, color: Colors.white),
+            onPressed: () {
+              Navigator.pushNamed(context, '/profile');
+            },
+            iconSize: screenWidth * 0.065,
+            icon: const Icon(Icons.person, color: Colors.white,),
           ),
         ],
         automaticallyImplyLeading: false,
@@ -67,8 +72,12 @@ class _MyRideScreenState extends State<MyRideScreen> {
                         setState(() => selectedIndex = 0);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: selectedIndex == 0 ? Colors.blue : Colors.grey[300],
-                        foregroundColor: selectedIndex == 0 ? Colors.white : Colors.black,
+                        backgroundColor:
+                            selectedIndex == 0
+                                ? ColorStyle.primaryColor
+                                : Colors.grey[300],
+                        foregroundColor:
+                            selectedIndex == 0 ? Colors.white : Colors.black,
                       ),
                       child: const Text('Ordered'),
                     ),
@@ -81,8 +90,12 @@ class _MyRideScreenState extends State<MyRideScreen> {
                         setState(() => selectedIndex = 1);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: selectedIndex == 1 ? Colors.blue : Colors.grey[300],
-                        foregroundColor: selectedIndex == 1 ? Colors.white : Colors.black,
+                        backgroundColor:
+                            selectedIndex == 1
+                                ? ColorStyle.primaryColor
+                                : Colors.grey[300],
+                        foregroundColor:
+                            selectedIndex == 1 ? Colors.white : Colors.black,
                       ),
                       child: const Text('Complete'),
                     ),
@@ -96,17 +109,26 @@ class _MyRideScreenState extends State<MyRideScreen> {
             BlocBuilder<MyrideBloc, MyrideState>(
               builder: (context, state) {
                 if (state is MyrideLoaded) {
-                  final filteredBookings = state.rideBookings.where((booking) {
-                    return selectedIndex == 0
-                        ? booking.booking_status == 'Ordered'
-                        : booking.booking_status == 'Completed';
-                  }).toList();
+                  final filteredBookings =
+                      state.rideBookings.where((booking) {
+                        return selectedIndex == 0
+                            ? booking.booking_status == 'Ordered'
+                            : booking.booking_status == 'Completed';
+                      }).toList();
 
                   if (filteredBookings.isEmpty) {
-                    return Center(
-                      child: Text(
-                        selectedIndex == 0 ? "No upcoming bookings" : "No completed bookings",
-                        style: const TextStyle(fontSize: 16),
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.6,
+                      child: Center(
+                        child: Text(
+                          selectedIndex == 0
+                              ? "No upcoming bookings"
+                              : "No completed bookings",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey,
+                          ),
+                        ),
                       ),
                     );
                   }
@@ -119,16 +141,22 @@ class _MyRideScreenState extends State<MyRideScreen> {
                       final booking = filteredBookings[index];
                       return Container(
                         constraints: const BoxConstraints(maxWidth: 400),
-                        margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 8,
+                        ),
                         padding: const EdgeInsets.all(18),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: Colors.grey.shade300, width: 1.5),
+                          border: Border.all(
+                            color: Colors.grey.shade300,
+                            width: 1.5,
+                          ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.deepPurpleAccent.withOpacity(0.15),
-                              blurRadius: 8,
+                              color: ColorStyle.primaryColor,
+                              // blurRadius: 8,
                               offset: const Offset(0, 6),
                             ),
                           ],
@@ -142,100 +170,151 @@ class _MyRideScreenState extends State<MyRideScreen> {
                               children: [
                                 Text(
                                   booking.customerName ?? "No Name",
-                                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 Text(
                                   formatDateTime(booking.dateTime),
-                                  style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                    fontSize: 13,
+                                  ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 8),
                             // Vehicle Info
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   booking.vehicleName ?? "No Vehicle",
-                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 Text(
                                   booking.vehicleNumber ?? "No Number",
-                                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 5),
                             Divider(color: Colors.grey.shade300),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 5),
                             // Pickup
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Icon(Icons.arrow_upward, color: Colors.green, size: 20),
+                                const Icon(
+                                  Icons.arrow_upward,
+                                  color: Colors.green,
+                                  size: 20,
+                                ),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
                                     booking.pickupAddress ?? "No Pickup",
-                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                const Icon(
+                                  Icons.arrow_downward,
+                                  color: Colors.red,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    booking.dropAddress ?? "No Drop",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 10),
-                            // Drop
-                            Row(
-                              children: [
-                                const Icon(Icons.arrow_downward, color: Colors.red, size: 20),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    booking.dropAddress ?? "No Drop",
-                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
                             // Button
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton.icon(
-                                onPressed: booking.booking_status?.toLowerCase() == "ordered"
-                                    ? () {
-                                        Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => RideSummaryScreen(
-                                          customerName: booking.customerName ?? '',
-                                          dateTime: booking.dateTime,
-                                          pickupAddress: booking.pickupAddress ?? '',
-                                          dropAddress: booking.dropAddress ?? '',
-                                          bookingType: booking.bookingType ?? '',
-                                          vehicleName: booking.vehicleName ?? '',
-                                          vehicleNumber: booking.vehicleNumber ?? '',
-                                          bookingStatus: booking.booking_status ?? '',
-                                          customerPhone: booking.customerPhone ?? '',
-                                          startKm: booking.startKm ?? '',
-                                          rideId: booking.uuid ?? '',
-                                        ),
-                                      ),
-                                    );
-                                      }
-                                    : null,
-                                icon: const Icon(Icons.local_taxi, color: Colors.white),
+                                onPressed:
+                                    booking.booking_status?.toLowerCase() ==
+                                            "ordered"
+                                        ? () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (
+                                                    context,
+                                                  ) => RideSummaryScreen(
+                                                    customerName:
+                                                        booking.customerName ??
+                                                        '',
+                                                    dateTime: booking.dateTime,
+                                                    pickupAddress:
+                                                        booking.pickupAddress ??
+                                                        '',
+                                                    dropAddress:
+                                                        booking.dropAddress ??
+                                                        '',
+                                                    bookingType:
+                                                        booking.bookingType ??
+                                                        '',
+                                                    vehicleName:
+                                                        booking.vehicleName ??
+                                                        '',
+                                                    vehicleNumber:
+                                                        booking.vehicleNumber ??
+                                                        '',
+                                                    bookingStatus:
+                                                        booking
+                                                            .booking_status ??
+                                                        '',
+                                                    customerPhone:
+                                                        booking.customerPhone ??
+                                                        '',
+                                                    startKm:
+                                                        booking.startKm ?? '',
+                                                    rideId: booking.uuid ?? '',
+                                                  ),
+                                            ),
+                                          );
+                                        }
+                                        : null,
+                                icon: const Icon(
+                                  Icons.local_taxi,
+                                  color: Colors.white,
+                                ),
                                 label: Text(
-                                  booking.booking_status?.toLowerCase() == "ordered"
+                                  booking.booking_status?.toLowerCase() ==
+                                          "ordered"
                                       ? "Pickup Customer"
                                       : "Completed",
                                   style: const TextStyle(fontSize: 16),
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: booking.booking_status?.toLowerCase() == "ordered"
-                                      ? Colors.deepPurple
-                                      : Colors.green,
+                                  backgroundColor:
+                                      booking.booking_status?.toLowerCase() ==
+                                              "ordered"
+                                          ? Colors.deepPurple
+                                          : Colors.green,
                                   foregroundColor: Colors.white,
                                   elevation: 0,
-                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
