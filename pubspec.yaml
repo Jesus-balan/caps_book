@@ -39,6 +39,7 @@ dependencies:
   fluid_bottom_nav_bar:
   timeline_tile:
   table_calendar:
+  image_picker:
   flutter_bloc:
   dio:
   hive:
@@ -52,6 +53,7 @@ dependencies:
   jwt_decoder:
   file_picker:
   intl:
+  flutter_dotenv:
 
 dev_dependencies:
   flutter_test:

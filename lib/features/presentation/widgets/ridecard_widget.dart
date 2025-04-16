@@ -50,12 +50,12 @@ class RideCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.grey.shade300, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: ColorStyle.primaryColor,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: ColorStyle.primaryColor,
+        //     offset: const Offset(0, 6),
+        //   ),
+        // ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

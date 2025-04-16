@@ -17,89 +17,104 @@ class MaintenanceScheduleCard extends StatelessWidget {
         onTap: () {
           Navigator.pushNamed(context, '/maintenance');
         },
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: Colors.grey.shade300, width: 1.5),
-            boxShadow: [
-              BoxShadow(color: ColorStyle.primaryColor, offset: Offset(0, 4)),
-            ],
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CustomText(
-                    text: 'Today Maintenance',
-                    fontSize: 19,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  CustomBottomSheetButton(
-                    label: 'Add',
-                    icon: Icons.add,
-                    bottomSheet: const MaintenanceStatusSheet(),
+        child: FutureBuilder<MaintenanceResponse>(
+          future: repository.fetchMaintenanceList(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text("");
+            } else if (!snapshot.hasData ||
+                snapshot.data!.data.results.isEmpty) {
+              return const SizedBox();
+            }
+
+            final maintenance = snapshot.data!.data.results.first;
+            final uuid = maintenance.uuid;
+            final vehicleName = maintenance.vehicleDetails.identity;
+            final cost = maintenance.cost ?? 'N/A';
+            final maintenanceType = maintenance.maintenanceType;
+            final startingDate = maintenance.startDate?.split('T').first ?? 'N/A';
+
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: Colors.grey.shade300, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: ColorStyle.primaryColor.withOpacity(0.1),
+                    blurRadius: 6,
+                    offset: Offset(0, 3),
                   ),
                 ],
               ),
-              const Divider(),
-
-              /// FutureBuilder to load maintenance data
-              FutureBuilder<MaintenanceResponse>(
-                future: repository.fetchMaintenanceList(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error}");
-                  } else if (!snapshot.hasData ||
-                      snapshot.data!.data.results.isEmpty) {
-                    return const Text("No maintenance scheduled today.");
-                  }
-
-                  final maintenance = snapshot.data!.data.results.first;
-                  final vehicleName = maintenance.vehicleDetails.identity;
-                  final shopName = maintenance.workshopDetails?.identity ?? 'N/A';
-                  final startingDate = maintenance.startDate;
-                  final maintenanceType = maintenance.maintenanceType;
-
-                  return Column(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [_buildRow(vehicleName), _buildRow(shopName)],
+                      CustomText(
+                        text: 'Today Maintenance',
+                        fontSize: 19,
+                        fontWeight: FontWeight.w600,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _buildRow(startingDate.split('T').first),
-                          _buildRow(maintenanceType, isHighlight: true),
-                        ],
+                      CustomBottomSheetButton(
+                        label: 'Add',
+                        icon: Icons.add,
+                        bottomSheet: MaintenanceStatusSheet(
+                          maintenanceUuid: uuid,
+                        ),
                       ),
                     ],
-                  );
-                },
+                  ),
+
+                  const Divider(height: 20),
+
+                  /// Info Rows with Labels
+                  _buildInfoRow("Vehicle", vehicleName),
+                  _buildInfoRow("Cost", cost),
+                  _buildInfoRow("Date", startingDate),
+                  _buildInfoRow("Type", maintenanceType ?? '', isHighlight: true),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildRow(String value, {bool isHighlight = false}) {
+  Widget _buildInfoRow(String label, String value, {bool isHighlight = false}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Text(
-        value,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: isHighlight ? ColorStyle.accentColor : Colors.black87,
-        ),
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Text(
+              "$label:",
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[800],
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 5,
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: isHighlight ? ColorStyle.accentColor : Colors.black,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }

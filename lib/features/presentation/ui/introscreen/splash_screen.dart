@@ -47,7 +47,7 @@ class SplashScreen extends StatelessWidget {
                 child: AnimatedTextKit(
                   animatedTexts: [
                     TypewriterAnimatedText(
-                      'Zenvic Cabs',
+                      'Zen Cabs',
                       speed: const Duration(milliseconds: 100),
                     ),
                   ],

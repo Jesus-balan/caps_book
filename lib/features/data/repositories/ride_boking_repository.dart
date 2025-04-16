@@ -8,7 +8,7 @@ class RideRepository {
   RideRepository();
 
 Future<List<RideBookingModel>> fetchBookings() async {
-  final url = Uri.parse('https://h5r5msdk-1111.inc1.devtunnels.ms/driver/booking/ordered/');
+  final url = Uri.parse('https://cabs.zenvicsoft.com/driver/booking/ordered/');
   final token = await HiveService().getToken();
   print('🔐 Token used in API call: $token');
 

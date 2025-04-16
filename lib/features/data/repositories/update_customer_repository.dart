@@ -8,7 +8,7 @@ class DriverService {
     required String dob,
     required String address,
   }) async {
-    final url = Uri.parse("https://h5r5msdk-1111.inc1.devtunnels.ms/driver/driver/update/");
+    final url = Uri.parse("https://cabs.zenvicsoft.com/driver/driver/update/");
 
     final response = await http.patch(
       url,

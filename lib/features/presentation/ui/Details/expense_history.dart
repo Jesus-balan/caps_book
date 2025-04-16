@@ -4,7 +4,6 @@ import 'package:caps_book/features/data/repositories/expense_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-
 class ExpenseListScreen extends StatefulWidget {
   const ExpenseListScreen({super.key});
 
@@ -40,9 +39,14 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
+            return const Center(
+              child: Text("Something went wrong. Please try again."),
+            );
+          } else if (!snapshot.hasData ||
+              snapshot.data?.data?.results == null ||
+              snapshot.data!.data!.results!.isEmpty) {
+            return const Center(child: Text("No expense data found"));
           }
-
           final results = snapshot.data!.data.results;
 
           return ListView.builder(

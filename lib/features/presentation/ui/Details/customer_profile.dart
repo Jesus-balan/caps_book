@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:caps_book/features/config/styles.dart';
 import 'package:caps_book/features/core/network/hive_service.dart';
+import 'package:caps_book/features/core/utils/snackbar_utils.dart';
 import 'package:caps_book/features/data/model/customer_details.dart';
 import 'package:caps_book/features/data/repositories/customer_repository.dart';
+import 'package:caps_book/features/data/repositories/image_upload_repository.dart';
 import 'package:caps_book/features/data/repositories/update_customer_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:caps_book/features/presentation/widgets/logout_widget.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -23,113 +28,113 @@ class _ProfilePageState extends State<ProfilePage> {
         foregroundColor: Colors.white,
       ),
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: FutureBuilder<UserModel>(
-          future: CustomerService.fetchDriverDetails(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text("Error: ${snapshot.error}"));
-            } else if (!snapshot.hasData) {
-              return const Center(child: Text("No data available"));
-            }
+      body: FutureBuilder<UserModel>(
+        future: CustomerService.fetchDriverDetails(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text("No data available"));
+          }
 
-            final user = snapshot.data!;
-            final driver = user.data.driver;
+          final user = snapshot.data!;
+          final driver = user.data.driver;
 
-            return Column(
-              children: [
-                Expanded(
-                  child: ListView(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          buildHeader(
-                            driver.identity,
-                            driver.driverId,
-                            driver.profilePhoto.file,
-                          ),
-                          Padding(
-                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                           child: Column(
+          return Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildHeader(
+                          driver.identity,
+                          driver.driverId,
+                          driver.profilePhoto?.file ??
+                              'https://i.pinimg.com/736x/f4/da/2e/f4da2e4e4bbff668b24b17f68eabeb72.jpg',
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
                             children: [
-                            EditableSection(
-                            address: driver.address,
-                            email: driver.email,
-                          ),
-                          buildEditableField(
-                            "📞 Phone Number",
-                            user.data.phoneNumber,
-                          ),
-                          buildEditableField("🎂 Date of Birth", driver.dob),
-                          buildEditableField(
-                            "🪪 License Number",
-                            driver.licenseNo,
-                          ),
-                          buildEditableField(
-                            "🆔 Aadhar Number",
-                            driver.aadharNo,
-                          ),
-                          Row(
-                            children: [
-                              Flexible(
-                                child: buildImageViewer(
-                                  context,
-                                  "License",
-                                  driver.licensePhoto.file,
-                                ),
+                              EditableSection(
+                                address: driver.address,
+                                email: driver.email,
                               ),
-                              const SizedBox(width: 20),
-                              Flexible(
-                                child: buildImageViewer(
-                                  context,
-                                  "Aadhar",
-                                  driver.aadharPhoto.file,
-                                ),
+                              buildEditableField(
+                                "📞 Phone Number",
+                                user.data.phoneNumber,
+                              ),
+                              buildEditableField(
+                                "🎂 Date of Birth",
+                                driver.dob,
+                              ),
+                              buildEditableField(
+                                "🪪 License Number",
+                                driver.licenseNo,
+                              ),
+                              buildEditableField(
+                                "🆔 Aadhar Number",
+                                driver.aadharNo,
+                              ),
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: buildImageViewer(
+                                      context,
+                                      "License",
+                                      driver.licensePhoto.file,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 20),
+                                  Flexible(
+                                    child: buildImageViewer(
+                                      context,
+                                      "Aadhar",
+                                      driver.aadharPhoto.file,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                            ],
-                           ),
-                            )
-                          
-                        ],
-                      ),
-                      settingsTile(
-                        () {
-                          Navigator.pushNamed(context, '/resetPass');
-                        },
-                        Icons.lock,
-                        "Change Password",
-                      ),
-                      settingsTile(
-                        () {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) => LogoutConfirmationDialog(),
-                          );
-                        },
-                        Icons.logout,
-                        "Logout",
-                        isLogout: true,
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                    settingsTile(
+                      () {
+                        Navigator.pushNamed(context, '/resetPass');
+                      },
+                      Icons.lock,
+                      "Change Password",
+                    ),
+                    settingsTile(
+                      () {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => LogoutConfirmationDialog(),
+                        );
+                      },
+                      Icons.logout,
+                      "Logout",
+                      isLogout: true,
+                    ),
+                  ],
                 ),
-              ],
-            );
-          },
-        ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
   Widget buildHeader(String name, String id, String profilePath) {
-    final String imageUrl =
-        "https://h5r5msdk-1111.inc1.devtunnels.ms$profilePath";
+    final String imageUrl = "https://cabs.zenvicsoft.com$profilePath";
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -142,15 +147,63 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       child: Row(
         children: [
-          // Profile Image
-          CircleAvatar(
-            radius: 40,
-            backgroundColor: Colors.white,
-            child: CircleAvatar(
-              radius: 36,
-              backgroundImage: NetworkImage(imageUrl),
-            ),
+          // Profile Image with camera icon
+          Stack(
+            children: [
+              CircleAvatar(
+                radius: 36,
+                backgroundColor: Colors.white,
+                child: ClipOval(
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    width: 70,
+                    height: 70,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.network(
+                        'https://i.pinimg.com/736x/f4/da/2e/f4da2e4e4bbff668b24b17f68eabeb72.jpg',
+                        fit: BoxFit.cover,
+                        width: 70,
+                        height: 70,
+                      );
+                    },
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: GestureDetector(
+                  onTap: () async {
+                    final picker = ImagePicker();
+                    final pickedFile = await picker.pickImage(
+                      source: ImageSource.gallery,
+                    );
+
+                    if (pickedFile != null) {
+                      File imageFile = File(pickedFile.path);
+                      await uploadAndUpdateProfileImage(imageFile);
+                    } else {
+                      print('⚠️ No image selected.');
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      color: ColorStyle.primaryColor,
+                      size: 16,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
+
           const SizedBox(width: 16),
 
           // Name & ID
@@ -221,8 +274,7 @@ class _ProfilePageState extends State<ProfilePage> {
     String label,
     String imagePath,
   ) {
-    final String fullImageUrl =
-        "https://h5r5msdk-1111.inc1.devtunnels.ms$imagePath";
+    final String fullImageUrl = "https://cabs.zenvicsoft.com$imagePath";
 
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -322,7 +374,7 @@ class _EditableSectionState extends State<EditableSection> {
   late TextEditingController emailController;
   late TextEditingController addressController;
   bool isEditing = false;
-
+  bool isSaving = false;
   @override
   void initState() {
     super.initState();
@@ -340,7 +392,7 @@ class _EditableSectionState extends State<EditableSection> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(10),
       margin: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -398,32 +450,40 @@ class _EditableSectionState extends State<EditableSection> {
           const SizedBox(height: 16),
           if (isEditing)
             ElevatedButton.icon(
-              onPressed: () async {
-                String email = emailController.text.trim();
-                String addr = addressController.text.trim();
-                String? token = await HiveService().getToken();
-                if (token == null) return;
+              onPressed:
+                  isSaving
+                      ? null
+                      : () async {
+                        setState(() => isSaving = true);
 
-                bool success = await DriverService.updateDriverDetails(
-                  token: token,
-                  email: email,
-                  dob: "2007-03-01", // Replace with actual DOB
-                  address: addr,
-                );
+                        String email = emailController.text.trim();
+                        String addr = addressController.text.trim();
+                        String? token = await HiveService().getToken();
+                        if (token == null) return;
 
-                if (success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Profile updated successfully"),
-                    ),
-                  );
-                  setState(() => isEditing = false);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Failed to update profile")),
-                  );
-                }
-              },
+                        bool success = await DriverService.updateDriverDetails(
+                          token: token,
+                          email: email,
+                          dob: "2007-03-01", // Replace with actual DOB
+                          address: addr,
+                        );
+
+                        setState(() => isSaving = false);
+
+                        if (success) {
+                          AppUtils.showSnackbar(
+                            context,
+                            "Profile updated successfully",
+                          );
+                          setState(() => isEditing = false);
+                        } else {
+                          AppUtils.showSnackbar(
+                            context,
+                            "Failed to update profile",
+                            isError: true,
+                          );
+                        }
+                      },
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorStyle.accentColor,
                 shape: RoundedRectangleBorder(
@@ -431,8 +491,21 @@ class _EditableSectionState extends State<EditableSection> {
                 ),
                 minimumSize: const Size(double.infinity, 48),
               ),
-              icon: const Icon(Icons.save, color: Colors.white),
-              label: const Text("Save", style: TextStyle(color: Colors.white)),
+              icon:
+                  isSaving
+                      ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                      : const Icon(Icons.save, color: Colors.white),
+              label: Text(
+                isSaving ? "Saving..." : "Save",
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
         ],
       ),

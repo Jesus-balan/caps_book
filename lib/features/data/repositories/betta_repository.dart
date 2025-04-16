@@ -4,24 +4,23 @@ import 'package:http/http.dart' as http;
 import 'package:caps_book/features/data/model/betta_model.dart';
 
 class BettaService {
-  static const String _url = 'https://h5r5msdk-1111.inc1.devtunnels.ms/driver/betta/list/';
+  static const String _url =
+      'https://cabs.zenvicsoft.com/driver/betta/list/';
 
   static Future<List<BettaItem>> fetchBettaList() async {
-    final token = await HiveService().getToken(); // Assuming your token is stored here
+    final token =
+        await HiveService().getToken(); // Assuming your token is stored here
 
-    final response = await http.get(
-      Uri.parse(_url),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
+    final response = await http
+        .get(Uri.parse(_url), headers: {'Authorization': 'Bearer $token'})
+        .timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       final bettaResponse = BettaResponse.fromJson(jsonData);
       return bettaResponse.data.results;
     } else {
-      throw Exception('Failed to load betta list');
+      return []; // instead of throwing
     }
   }
 }

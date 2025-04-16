@@ -6,7 +6,7 @@ import 'package:caps_book/features/data/model/customer_details.dart';
 import 'package:http/http.dart' as http;
 
 class CustomerService {
-  static const String _url = 'https://h5r5msdk-1111.inc1.devtunnels.ms/driver/driver/retrieve/';
+  static const String _url = 'https://cabs.zenvicsoft.com/driver/driver/retrieve/';
 
   static Future<UserModel> fetchDriverDetails() async {
     final token = await HiveService().getToken();

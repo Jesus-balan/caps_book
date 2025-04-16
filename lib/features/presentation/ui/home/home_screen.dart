@@ -1,13 +1,18 @@
 import 'package:caps_book/features/config/styles.dart';
+import 'package:caps_book/features/core/utils/snackbar_utils.dart';
+import 'package:caps_book/features/data/model/rideBooking_model.dart';
+import 'package:caps_book/features/data/repositories/customer_repository.dart';
+import 'package:caps_book/features/data/repositories/ride_response_repository.dart';
 import 'package:caps_book/features/data/repositories/today_maintenance_repository.dart';
 import 'package:caps_book/features/presentation/widgets/custom_text.dart';
-import 'package:caps_book/features/presentation/widgets/custom_timeline.dart';
 import 'package:caps_book/features/presentation/widgets/maintenance_report.dart';
 import 'package:caps_book/features/presentation/widgets/maintenance_schedule_card.dart';
 import 'package:caps_book/features/presentation/widgets/ride_tile_widget.dart';
+import 'package:caps_book/features/presentation/widgets/running_status_widget.dart';
 import 'package:caps_book/features/presentation/widgets/summary_card.dart';
 import 'package:caps_book/features/presentation/widgets/unplaned_maintenance.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,24 +23,73 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int tripStep = 0; // 0 = ready for pickup, 1 = picked, 2 = dropped
-  DateTime? pickupTime;
-  DateTime? dropTime;
-  DateTime? completeTime;
-
-  final MaintenanceRepository repository = MaintenanceRepository();
-
+  late final MaintenanceRepository repository;
   @override
   void initState() {
     super.initState();
-    _callTodayMaintenanceAPI();
+    repository = MaintenanceRepository();
+    _loadHomeData();
+    _fetchDriverDetails();
+  } 
+ 
+  Future<void> _loadHomeData() async {
+    // showLoaderDialog(context); // Show loading popup
+    try {
+      await Future.wait([
+        _fetchDriverDetails(),
+        _loadUpcomingRide(),
+        _callTodayMaintenanceAPI(),
+      ]);
+    } catch (e) {
+      
+    } finally {
+       setState(() => isLoading = false); // <-- Add this
+      // hideLoaderDialog(context); // Hide popup
+    }
   }
 
-  void _callTodayMaintenanceAPI() async {
+  bool isLoading = true;
+  bool isSheetOpening = false;
+
+  String? balance;
+  String? rating;
+
+  RideBookingModel? _upcomingRide;
+
+  Future<void> _loadUpcomingRide() async {
+    try {
+      final ride = await RideBookingRepository()
+          .fetchFirstUpcomingBooking()
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () => throw Exception("Request timed out"),
+          );
+
+      setState(() {
+        _upcomingRide = ride;
+      });
+    } catch (e) {
+      
+    }
+  }
+
+  Future<void> _callTodayMaintenanceAPI() async {
     try {
       await repository.fetchMaintenanceList();
     } catch (e) {
-      print("Error calling maintenance API: $e");
+      
+    }
+  }
+
+  Future<void> _fetchDriverDetails() async {
+    try {
+      final driverDetails = await CustomerService.fetchDriverDetails();
+      setState(() {
+        balance = driverDetails.data.driver.balance;
+        rating = driverDetails.data.driver.rating;
+      });
+    } catch (e) {
+      
     }
   }
 
@@ -50,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Image.asset(
           'assets/images/logo.png',
           height: screenHeight * 0.035,
-          color: Colors.white,
+          color: const Color.fromARGB(255, 255, 255, 255),
         ),
         backgroundColor: ColorStyle.primaryColor,
         foregroundColor: Colors.white,
@@ -70,202 +124,148 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: EdgeInsets.all(screenWidth * 0.04),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Summary Cards
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: SummaryCard(
-                      title: "Total Earnings(April)",
-                      value: "\$3100",
-                      icon: LucideIcons.wallet,
-                      bottomColor: ColorStyle.primaryColor,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: SummaryCard(
-                      title: "Complete Ride(April)",
-                      value: "16",
-                      icon: LucideIcons.checkCircle2,
-                      bottomColor: ColorStyle.primaryColor,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: SummaryCard(
-                      title: "Absent Ride(April)",
-                      value: "02",
-                      icon: LucideIcons.clock4,
-                      bottomColor: ColorStyle.primaryColor,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: SummaryCard(
-                      title: "Rating Star",
-                      value: "",
-                      icon: LucideIcons.star,
-                      bottomColor: ColorStyle.primaryColor,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "New Upcoming Ride",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 10),
-              RideTile(
-                name: 'Peter Thornton',
-                date: '10 May’25 at 4:10 AM',
-                pickup: '17, Yonge St, Toronto, Canada',
-                drop: '20, Avenue St, Toronto, Canada',
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: const [
-                  CustomText(
-                    text: 'Running Order',
-                    fontSize: 19,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Container(
-                padding: EdgeInsets.all(screenWidth * 0.030),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: Colors.grey.shade300, width: 1.5),
-                  boxShadow: [
-                    BoxShadow(
-                      color: ColorStyle.primaryColor,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      body: RefreshIndicator(
+        onRefresh: _loadHomeData,
+        child: Padding(
+          padding: EdgeInsets.all(screenWidth * 0.04),
+          child: SingleChildScrollView(
+            physics:
+                const AlwaysScrollableScrollPhysics(), // ensures pull works even if list is short
+            child: Column(
+              children: [
+                // Summary Cards
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    const SizedBox(height: 6),
-                    CustomTimelineTile(
-                      title: "START",
-                      time: "15:30, Sep 9, 2018",
-                      icon: Icons.check,
-                      step: 0,
-                      currentStep: tripStep,
+                    Expanded(
+                      child: SummaryCard(
+                        title: "Total Earnings(April)",
+                        value: balance != null ? "₹$balance" : "--",
+                        icon: LucideIcons.wallet,
+                        bottomColor: ColorStyle.primaryColor,
+                      ),
                     ),
-                    CustomTimelineTile(
-                      title: "TRAVELING",
-                      time: "15:45, Sep 9, 2018",
-                      icon: Icons.directions_car,
-                      step: 1,
-                      currentStep: tripStep,
-                    ),
-                    CustomTimelineTile(
-                      title: "COMPLETED",
-                      time: "Estimated: 17:30",
-                      icon: Icons.done_all,
-                      step: 2,
-                      currentStep: tripStep,
-                      isLast: true,
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                          onPressed:
-                              tripStep < 3
-                                  ? () {
-                                    setState(() {
-                                      if (tripStep == 0) {
-                                        pickupTime = DateTime.now();
-                                        tripStep = 1;
-                                      } else if (tripStep == 1) {
-                                        dropTime = DateTime.now();
-                                        tripStep = 2;
-                                      } else if (tripStep == 2) {
-                                        completeTime = DateTime.now();
-                                        tripStep = 3;
-                                      }
-                                    });
-                                  }
-                                  : null, // Disable when tripStep == 3
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                tripStep < 3
-                                    ? ColorStyle.primaryColor
-                                    : Colors.grey,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * 0.08,
-                              vertical: screenHeight * 0.015,
-                            ),
-                          ),
-                          child: Text(
-                            tripStep == 0
-                                ? 'Pickup Customer'
-                                : tripStep == 1
-                                ? 'Drop Customer'
-                                : tripStep == 2
-                                ? 'Complete Trip'
-                                : 'Trip Completed',
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SummaryCard(
+                        title: "Rating Star",
+                        value: rating ?? "--",
+                        icon: LucideIcons.star,
+                        bottomColor: ColorStyle.primaryColor,
+                      ),
                     ),
                   ],
                 ),
-              ),
-              SizedBox(height: 25),
-              MaintenanceScheduleCard(),
-              SizedBox(height: screenHeight * 0.02),
-              MaintenanceReport(),
-             SizedBox(height: screenHeight * 0.05),
-            ],
+                const SizedBox(height: 20),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "New Upcoming Ride",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                _upcomingRide != null
+                    ? RideTile(
+                      name: _upcomingRide!.customerName,
+                      date: DateFormat(
+                        'MMM dd, yyyy – hh:mm a',
+                      ).format(_upcomingRide!.dateTime),
+                      pickup: _upcomingRide!.pickupAddress,
+                      drop: _upcomingRide!.dropAddress,
+                    )
+                    : Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey.shade400),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.directions_car_filled_outlined,
+                            size: 30,
+                            color: ColorStyle.primaryColor,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "No Upcoming Ride",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey.shade800,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "You're all caught up for now!",
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                const SizedBox(height: 16),
+                Row(
+                  children: const [
+                    CustomText(
+                      text: 'Running Status',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                RunningStatusWidget(),
+                SizedBox(height: 25),
+                MaintenanceScheduleCard(),
+                SizedBox(height: screenHeight * 0.01),
+                MaintenanceReport(),
+                SizedBox(height: screenHeight * 0.07),
+              ],
+            ),
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            backgroundColor: Colors.white,
-            isScrollControlled: true,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            builder: (context) => UnplannedMaintenanceSheet(),
-          );
-        },
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text(
-          'Add Unplanned',
-          style: TextStyle(color: Colors.white),
+        onPressed:
+            isSheetOpening
+                ? null
+                : () async {
+                  setState(() => isSheetOpening = true);
+                  try {
+                    await showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(20),
+                        ),
+                      ),
+                      builder: (context) => UnplannedMaintenanceSheet(),
+                    );
+                  } finally {
+                    setState(() => isSheetOpening = false);
+                  }
+                },
+        icon:
+            isSheetOpening
+                ? const CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                )
+                : const Icon(Icons.add, color: Colors.white),
+        label: Text(
+          isSheetOpening ? "Loading..." : "Emergency Service",
+          style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: ColorStyle.primaryColor,
       ),
     );
   }
-
 }

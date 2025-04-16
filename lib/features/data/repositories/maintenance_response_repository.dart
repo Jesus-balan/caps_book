@@ -4,7 +4,7 @@ import 'package:caps_book/features/data/model/maintenance_response_model.dart';
 import 'package:http/http.dart' as http;
 
 class UnplannedMaintenanceRepository {
-  final String baseUrl = "https://h5r5msdk-1111.inc1.devtunnels.ms";
+  final String baseUrl = "https://cabs.zenvicsoft.com";
 
   Future<TodayMaintenanceResponse> fetchUnplannedMaintenanceList() async {
     final url = Uri.parse("$baseUrl/driver/today-Unplanned/");
@@ -23,7 +23,7 @@ class UnplannedMaintenanceRepository {
         final Map<String, dynamic> jsonData = json.decode(response.body);
         return TodayMaintenanceResponse.fromJson(jsonData);
       } else {
-        throw Exception("Failed to load unplanned maintenance: ${response.statusCode}");
+        throw Exception("Failed to load unplanned maintenance.");
       }
     } catch (e) {
       throw Exception("Error fetching unplanned maintenance: $e");

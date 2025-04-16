@@ -20,19 +20,22 @@ class CustomBottomSheetButton extends StatelessWidget {
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
-          backgroundColor: Colors.white,
-          barrierColor: Colors.black.withOpacity(0.3),
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
-          builder: (context) => bottomSheet,
+          builder:
+              (context) => Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: bottomSheet,
+              ),
         );
       },
       icon: Icon(icon),
       label: Text(label),
       style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-        ),
+        shape: RoundedRectangleBorder(),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         backgroundColor: ColorStyle.primaryColor,
         foregroundColor: Colors.white,

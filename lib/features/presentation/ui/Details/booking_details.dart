@@ -1,11 +1,10 @@
 import 'package:caps_book/features/config/styles.dart';
+import 'package:caps_book/features/core/network/hive_service.dart';
 import 'package:flutter/material.dart';
-
-
 import 'package:caps_book/features/presentation/widgets/custom_text.dart';
 import 'package:http/http.dart' as http;
 
-class RideSummaryScreen extends StatelessWidget {
+class RideSummaryScreen extends StatefulWidget {
   final String customerName;
   final DateTime dateTime;
   final String pickupAddress;
@@ -16,10 +15,7 @@ class RideSummaryScreen extends StatelessWidget {
   final String bookingStatus;
   final String customerPhone;
   final String startKm;
- final String rideId; // The ID to be passed to the API
-
-
-  
+  final String rideId; // The ID to be passed to the API
 
   const RideSummaryScreen({
     super.key,
@@ -36,40 +32,101 @@ class RideSummaryScreen extends StatelessWidget {
     required this.rideId,
   });
 
- Future<void> _startTrip(BuildContext context) async {
-  final String apiUrl = 'https://h5r5msdk-1111.inc1.devtunnels.ms/driver/booking/$rideId/trip-start/';
+  @override
+  State<RideSummaryScreen> createState() => _RideSummaryScreenState();
 
-  try {
-    final response = await http.patch(
-      Uri.parse(apiUrl),
-      body: {}, // Include body only if required
-    );
-
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Trip started successfully")),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to start trip. Code: ${response.statusCode}")),
-      );
-    }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Error: $e")),
+  static Widget _billRow(
+    String label,
+    String value, {
+    Color? color,
+    bool isBold = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                fontSize: 14,
+                color: color ?? Colors.black,
+                fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
+class _RideSummaryScreenState extends State<RideSummaryScreen> {
+  bool isLoading = false;
+
+  Future<void> _startTrip(BuildContext context) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final String apiUrl =
+        'https://cabs.zenvicsoft.com/driver/booking/${widget.rideId}/trip-start/';
+
+    try {
+      final token = await HiveService().getToken();
+      final response = await http.patch(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Trip started successfully")),
+        );
+        Navigator.pushReplacementNamed(context, '/bottombar');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Failed to start trip. Code: ${response.statusCode}"),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final String date = "${dateTime.day} ${_getMonthName(dateTime.month)} ${dateTime.year}";
-    final String time = "${_formatTime(dateTime)}";
+    final String date =
+        "${widget.dateTime.day} ${_getMonthName(widget.dateTime.month)} ${widget.dateTime.year}";
+    final String time = "${_formatTime(widget.dateTime)}";
 
     return Scaffold(
       backgroundColor: const Color(0xffF5F5F5),
       appBar: AppBar(
-        title: const Text("Ride Summary", style: TextStyle(color: Colors.white)),
+        title: const Text(
+          "Ride Summary",
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: ColorStyle.primaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -93,12 +150,18 @@ class RideSummaryScreen extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(customerName, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          Text(
+                            widget.customerName,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                           const SizedBox(height: 4),
                         ],
                       ),
                       const Spacer(),
-                      Text("$date, $time", style: const TextStyle(fontSize: 12)),
+                      Text(
+                        "$date, $time",
+                        style: const TextStyle(fontSize: 12),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -131,7 +194,7 @@ class RideSummaryScreen extends StatelessWidget {
                     children: [
                       const Icon(Icons.location_on, color: Colors.green),
                       const SizedBox(width: 8),
-                      Expanded(child: Text(pickupAddress)),
+                      Expanded(child: Text(widget.pickupAddress)),
                     ],
                   ),
                   const Divider(),
@@ -139,7 +202,7 @@ class RideSummaryScreen extends StatelessWidget {
                     children: [
                       const Icon(Icons.location_on, color: Colors.red),
                       const SizedBox(width: 8),
-                      Expanded(child: Text(dropAddress)),
+                      Expanded(child: Text(widget.dropAddress)),
                     ],
                   ),
                 ],
@@ -147,7 +210,8 @@ class RideSummaryScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: 12),
-            Row(crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
                 CustomText(text: 'Customer Details', fontSize: 20),
               ],
@@ -164,59 +228,69 @@ class RideSummaryScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _billRow("Customer Name", customerName),
-                  _billRow("Customer Number", customerPhone),
-                  _billRow("Vehicle Name", vehicleName),
-                  _billRow("Vehicle Number", vehicleNumber),
-                  _billRow("Starting Date", date),
-                  _billRow("Starting Time", time),
-                  _billRow("Start KM", startKm),
-                  _billRow("Booking Type", bookingType),
-                  _billRow("Booking Status", bookingStatus),
-                  _billRow("Pickup Address", pickupAddress),
-                  _billRow("Drop Address", dropAddress),
+                  RideSummaryScreen._billRow(
+                    "Customer Name",
+                    widget.customerName,
+                  ),
+                  RideSummaryScreen._billRow(
+                    "Customer Number",
+                    widget.customerPhone,
+                  ),
+                  RideSummaryScreen._billRow(
+                    "Vehicle Name",
+                    widget.vehicleName,
+                  ),
+                  RideSummaryScreen._billRow(
+                    "Vehicle Number",
+                    widget.vehicleNumber,
+                  ),
+                  RideSummaryScreen._billRow("Starting Date", date),
+                  RideSummaryScreen._billRow("Starting Time", time),
+                  RideSummaryScreen._billRow("Start KM", widget.startKm.isNotEmpty ? widget.startKm : "N/A"),
+                  RideSummaryScreen._billRow(
+                    "Booking Type",
+                    widget.bookingType,
+                  ),
+                  RideSummaryScreen._billRow(
+                    "Booking Status",
+                    widget.bookingStatus,
+                  ),
+                  RideSummaryScreen._billRow(
+                    "Pickup Address",
+                    widget.pickupAddress,
+                  ),
+                  RideSummaryScreen._billRow(
+                    "Drop Address",
+                    widget.dropAddress,
+                  ),
                 ],
               ),
             ),
             const SizedBox(height: 24),
 
             // Start Trip Button
-             SizedBox(
+            SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => _startTrip(context),
+                onPressed: isLoading ? null : () => _startTrip(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: ColorStyle.primaryColor,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                child: const Text("Start Trip", style: TextStyle(fontSize: 16, color: Colors.white)),
+                child:
+                    isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                          "Start Trip",
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  static Widget _billRow(String label, String value, {Color? color, bool isBold = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label,
-              style: TextStyle(fontSize: 14, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
-          Flexible(
-            child: Text(value,
-                textAlign: TextAlign.end,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: color ?? Colors.black,
-                  fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-                )),
-          ),
-        ],
       ),
     );
   }
@@ -231,8 +305,18 @@ class RideSummaryScreen extends StatelessWidget {
 
   String _getMonthName(int month) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return months[month - 1];
   }

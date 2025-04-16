@@ -1,3 +1,4 @@
+import 'package:caps_book/features/presentation/ui/Details/emergency_details.dart';
 import 'package:caps_book/features/presentation/ui/Details/maintenance_details.dart';
 import 'package:caps_book/features/presentation/ui/auth/changePassword/change_password.dart';
 import 'package:caps_book/features/presentation/ui/auth/login/login_screen.dart';
@@ -36,6 +37,9 @@ class AppRoutes {
         break;
         case '/maintenance':
         page =  MaintenanceDetailsScreen();
+        break;
+        case '/emergency':
+        page =  EmergencyServiceDetails();
         break;
          case '/expenselist':
         page =  ExpenseListScreen();

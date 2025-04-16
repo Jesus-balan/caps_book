@@ -27,11 +27,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedDate = DateTime.now(); // Set today initially
-    _loadPunchState();
-    _loadHistory().then((_) {
-      _filterRecordsForSelectedDate(); // optional filter after loading
-    });
+    _selectedDate = DateTime.now();
+    _initAttendanceData();
+  }
+
+  Future<void> _initAttendanceData() async {
+    await _loadPunchState();
+    await _loadHistory();
   }
 
   void _filterRecordsForSelectedDate() {
@@ -67,18 +69,24 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   Future<void> _loadHistory() async {
     try {
       final fetched = await fetchAttendanceHistory();
-      setState(() {
-        history = fetched;
-      });
+      if (mounted) setState(() => history = fetched);
+      _filterRecordsForSelectedDate();
     } catch (e) {
-      print("Error loading history: $e");
+      if (mounted) {
+        showCustomSnackbar(
+          context: context,
+          title: "Error",
+          message: "Unable to load attendance history. Please try again.",
+          isSuccess: false,
+        );
+      }
     }
   }
 
   Future<List<CheckRecord>> fetchAttendanceHistory() async {
     final token = await HiveService().getToken();
     final url = Uri.parse(
-      'https://h5r5msdk-1111.inc1.devtunnels.ms/driver/checkin/retrieve/',
+      'https://cabs.zenvicsoft.com/driver/checkin/retrieve/',
     );
     final headers = {
       "Content-Type": "application/json",
@@ -123,11 +131,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   Future<void> handlePunch() async {
     setState(() => isLoading = true);
-
     final token = await HiveService().getToken();
-    final url = Uri.parse(
-      'https://h5r5msdk-1111.inc1.devtunnels.ms/driver/check/in/out/',
-    );
+    final url = Uri.parse('https://cabs.zenvicsoft.com/driver/check/in/out/');
     final now = DateTime.now();
 
     final body = {
@@ -159,6 +164,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           isPunchedIn = !isPunchedIn;
         });
         await _loadHistory(); // Refresh after punch
+        _filterRecordsForSelectedDate(); // Refresh list for selected date
 
         showCustomSnackbar(
           context: context,
@@ -188,6 +194,27 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     } finally {
       setState(() => isLoading = false);
     }
+  }
+
+  bool _shouldShowPunchButton() {
+    final today = DateTime.now();
+    final isToday =
+        DateFormat('yyyy-MM-dd').format(today) ==
+        DateFormat('yyyy-MM-dd').format(_selectedDate!);
+
+    if (!isToday) return false;
+
+    // Get today's record
+    final todayRecord =
+        _selectedDateRecords.isNotEmpty ? _selectedDateRecords.first : null;
+
+    if (todayRecord != null &&
+        todayRecord.checkIn != null &&
+        todayRecord.checkOut != null) {
+      return false;
+    }
+
+    return true;
   }
 
   Widget _buildCalendar(BuildContext context) {
@@ -232,7 +259,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             shape: BoxShape.circle,
           ),
           selectedDecoration: BoxDecoration(
-            color: isPunchedIn ?  Colors.red : Colors.green,
+            color: isPunchedIn ? Colors.red : Colors.green,
             shape: BoxShape.circle,
           ),
           selectedTextStyle: const TextStyle(
@@ -264,17 +291,23 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         calendarBuilders: CalendarBuilders(
           defaultBuilder: (context, day, focusedDay) {
             final formattedDay = DateFormat('yyyy-MM-dd').format(day);
+
+            // Find record for the given day
             final recordList =
                 history.where((r) => r.checkDate == formattedDay).toList();
-
             final CheckRecord? record =
                 recordList.isNotEmpty ? recordList.first : null;
 
+            // Only render decoration if there's a record
             if (record != null) {
-              final bool punched = record.checkIn != null;
+              final bool punchedIn = record.checkIn != null;
+
               return Container(
                 decoration: BoxDecoration(
-                  color: punched ? Colors.green : Colors.red,
+                  color:
+                      punchedIn
+                          ? Colors.green
+                          : Colors.red, // ✅ green if punched in, red otherwise
                   shape: BoxShape.circle,
                 ),
                 margin: const EdgeInsets.all(6),
@@ -288,6 +321,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 ),
               );
             }
+
+            // No record for the day: return null (default styling)
             return null;
           },
         ),
@@ -354,7 +389,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   const Icon(Icons.login, color: Colors.green),
                   const SizedBox(width: 8),
                   Text(
-                    "Check-In: ${formatTime(record.checkIn) ?? '--'}",
+                    "Check-In: ${formatTime(record.checkIn)}",
                     style: const TextStyle(fontSize: 14),
                   ),
                 ],
@@ -365,7 +400,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   const Icon(Icons.logout, color: Colors.red),
                   const SizedBox(width: 8),
                   Text(
-                    "Check-Out: ${formatTime(record.checkOut) ?? '--'}",
+                    "Check-Out: ${formatTime(record.checkOut)}",
                     style: const TextStyle(fontSize: 14),
                   ),
                 ],
@@ -393,67 +428,73 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           IconButton(
             onPressed: () {},
             iconSize: screenWidth * 0.065,
-            icon: const Icon(Icons.notifications, color: Colors.white,),
+            icon: const Icon(Icons.notifications, color: Colors.white),
           ),
           IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/profile');
+            onPressed: () async {
+              await Navigator.pushNamed(context, '/profile');
+              await _loadHistory(); // refresh data
             },
             iconSize: screenWidth * 0.065,
-            icon: const Icon(Icons.person, color: Colors.white,),
+            icon: const Icon(Icons.person, color: Colors.white),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildCalendar(context),
-            const SizedBox(height: 10),
-            _buildHistoryList(),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton.icon(
-                  onPressed: isLoading ? null : handlePunch,
-                  icon:
-                      isLoading
-                          ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: ColorStyle.accentColor,
-                              strokeWidth: 2,
-                            ),
-                          )
-                          : Icon(
-                            isPunchedIn ? Icons.logout : Icons.login,
-                            size: 20,
-                          ),
-                  label: Text(
-                    isLoading
-                        ? "Loading..."
-                        : (isPunchedIn ? "Punch Out" : "Punch In"),
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        isPunchedIn ? Colors.red : ColorStyle.primaryColor,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+      body: RefreshIndicator(
+        onRefresh: _loadHistory,
+        child: SingleChildScrollView(
+          physics:
+              const AlwaysScrollableScrollPhysics(), // allow pull even when full
+          child: Column(
+            children: [
+              _buildCalendar(context),
+              const SizedBox(height: 5),
+              if (_shouldShowPunchButton())
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: ElevatedButton.icon(
+                      onPressed: isLoading ? null : handlePunch,
+                      icon:
+                          isLoading
+                              ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: ColorStyle.accentColor,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : Icon(
+                                isPunchedIn ? Icons.logout : Icons.login,
+                                size: 20,
+                              ),
+                      label: Text(
+                        isLoading
+                            ? "Loading..."
+                            : (isPunchedIn ? "Punch Out" : "Punch In"),
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            isPunchedIn ? Colors.red : ColorStyle.primaryColor,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
+              const SizedBox(height: 5),
+              _buildHistoryList(),
+            ],
+          ),
         ),
       ),
     );

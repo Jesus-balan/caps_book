@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:caps_book/features/data/model/expense_model.dart';
 
 class ExpenseService {
-  static const String _url = 'https://h5r5msdk-1111.inc1.devtunnels.ms/driver/ledger/list/';
+  static const String _url = 'https://cabs.zenvicsoft.com/driver/ledger/list/';
 
   static Future<ExpenseResponse> fetchExpenses() async {
     final token = await HiveService().getToken();

@@ -36,7 +36,7 @@ class IncentiveScreen extends StatelessWidget {
         body: Padding(
           padding: EdgeInsets.all(screenWidth * 0.04),
           child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
+            physics: AlwaysScrollableScrollPhysics(),
             child: Column(
               children: [
                 Row(

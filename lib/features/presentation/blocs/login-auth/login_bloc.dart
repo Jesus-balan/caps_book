@@ -16,7 +16,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(LoginSuccess(success));
       } 
       catch (e) {
-        emit(LoginFailure("Login failed"));
+        emit(LoginFailure("Invalid email or password"));
       }
     });
   }

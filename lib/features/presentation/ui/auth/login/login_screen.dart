@@ -1,6 +1,6 @@
 import 'package:caps_book/features/config/styles.dart';
 import 'package:caps_book/features/data/model/login_model.dart';
-import 'package:caps_book/features/presentation/blocs/login-auth/bloc/login_bloc.dart';
+import 'package:caps_book/features/presentation/blocs/login-auth/login_bloc.dart';
 import 'package:caps_book/features/presentation/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (fieldType == 'Password') {
       if (value.length < 4) {
-        return 'Password must be at least 6 characters';
+        return 'Password must be at least 4 characters';
       }
     }
 
@@ -70,116 +70,129 @@ class _LoginScreenState extends State<LoginScreen> {
                     topRight: Radius.circular(50),
                   ),
                 ),
-                child: SingleChildScrollView(
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: size.height * 0.04),
-
-                        /// **Login Title**
-                        Center(
-                          child: Text(
-                            "Login",
-                            style: GoogleFonts.lora(
-                              fontSize: size.width * 0.09,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: size.height * 0.02),
-
-                        /// **Phone Field**
-                        CustomTextField(
-                          label: 'Phone',
-                          hintText: 'Enter your phone number',
-                          keyboardType: TextInputType.number,
-                          maxLength: 10,
-                          validator:
-                              (value) =>
-                                  fieldValidator(value, fieldType: 'Phone'),
-                          controller: phoneController,
-                        ),
-
-                        /// **Password Field**
-                        CustomTextField(
-                          label: 'Password',
-                          hintText: 'Enter your password',
-                          controller: passwordController,
-                          validator:
-                              (value) =>
-                                  fieldValidator(value, fieldType: 'Password'),
-                          isPassword: true,
-                        ),
-
-                        SizedBox(height: size.height * 0.02),
-
-                        /// **Login Button**
-                        BlocConsumer<LoginBloc, LoginState>(
-                          listener: (context, state) {
-                            if (state is LoginSuccess) {
-                              Navigator.pushNamed(context, '/bottombar');
-                            }
-                            if (state is LoginFailure) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(state.error)),
-                              );
-                            }
-                          },
-                          builder: (context, state) {
-                            return SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: ColorStyle.primaryColor,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 18,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    child: ConstrainedBox(
+                       constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                      child: IntrinsicHeight(
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: size.height * 0.03),
+                        
+                              /// **Login Title**
+                              Center(
+                                child: Text(
+                                  "Login",
+                                  style: GoogleFonts.lora(
+                                    fontSize: size.width * 0.09,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                onPressed:
-                                    state is LoginLoading
-                                        ? null
-                                        : () {
-                                          if (_formKey.currentState!
-                                              .validate()) {
-                                            context.read<LoginBloc>().add(
-                                              LoginAuthEvent(
-                                                LoginModel(
-                                                  phone_number:
-                                                      phoneController.text,
-                                                  password:
-                                                      passwordController.text,
+                              ),
+                        
+                              SizedBox(height: size.height * 0.02),
+                        
+                              /// **Phone Field**
+                              CustomTextField(
+                                label: 'Phone',
+                                hintText: 'Enter your phone number',
+                                keyboardType: TextInputType.number,
+                                maxLength: 10,
+                                validator:
+                                    (value) =>
+                                        fieldValidator(value, fieldType: 'Phone'),
+                                controller: phoneController,
+                              ),
+                        
+                              /// **Password Field**
+                              CustomTextField(
+                                label: 'Password',
+                                hintText: 'Enter your password',
+                                controller: passwordController,
+                                validator:
+                                    (value) =>
+                                        fieldValidator(value, fieldType: 'Password'),
+                                isPassword: true,
+                              ),
+                        
+                              SizedBox(height: size.height * 0.02),
+                        
+                              /// **Login Button**
+                              BlocConsumer<LoginBloc, LoginState>(
+                                listener: (context, state) {
+                                  if (state is LoginSuccess) {
+                                    Navigator.pushNamed(context, '/bottombar');
+                                  }
+                                  if (state is LoginFailure) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(state.error),
+                                        backgroundColor: Colors.red,
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                  }
+                                },
+                                builder: (context, state) {
+                                  return SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: ColorStyle.primaryColor,
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 16,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                      ),
+                                      onPressed:
+                                          state is LoginLoading
+                                              ? null
+                                              : () {
+                                                if (_formKey.currentState!
+                                                    .validate()) {
+                                                  context.read<LoginBloc>().add(
+                                                    LoginAuthEvent(
+                                                      LoginModel(
+                                                        phone_number:
+                                                            phoneController.text,
+                                                        password:
+                                                            passwordController.text,
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                      child:
+                                          state is LoginLoading
+                                              ? CircularProgressIndicator(
+                                                color: ColorStyle.primaryColor,
+                                              )
+                                              : Text(
+                                                "Login",
+                                                style: GoogleFonts.lora(
+                                                  color: Colors.white,
+                                                  fontSize: 18,
                                                 ),
                                               ),
-                                            );
-                                          }
-                                        },
-                                child:
-                                    state is LoginLoading
-                                        ? CircularProgressIndicator(
-                                          color: ColorStyle.primaryColor,
-                                        )
-                                        : Text(
-                                          "Login",
-                                          style: GoogleFonts.lora(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                          ),
-                                        ),
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
+                        
+                              SizedBox(height: size.height * 0.01),
+                            ],
+                          ),
                         ),
-
-                        SizedBox(height: size.height * 0.01),
-                      ],
+                      ),
                     ),
-                  ),
+                  );
+                  }
                 ),
               ),
             ),

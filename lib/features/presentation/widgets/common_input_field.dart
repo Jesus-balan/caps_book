@@ -31,10 +31,10 @@ class CommonTextField extends StatelessWidget {
         style: GoogleFonts.lora(fontSize: 16, color: Colors.black87),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: GoogleFonts.lora(fontSize: 16, color: ColorStyle.primaryColor),
+          labelStyle: GoogleFonts.lora(fontSize: 16, color: Colors.black),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           filled: true,
-          fillColor: Colors.transparent,
+          fillColor: Colors.white,
           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

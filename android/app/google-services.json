@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "145536135723",
+    "project_id": "cab-notification-8850b",
+    "storage_bucket": "cab-notification-8850b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:145536135723:android:b3337a2341f77d3a51b06e",
+        "android_client_info": {
+          "package_name": "com.example.caps_book"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAh21AIOwZDR64v08IG0CwaZm7-78QsgzE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

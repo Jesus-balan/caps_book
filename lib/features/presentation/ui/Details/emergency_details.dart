@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:caps_book/features/data/model/today_maintenance_model.dart';
-import 'package:caps_book/features/data/repositories/today_maintenance_repository.dart';
+import 'package:caps_book/features/data/model/maintenance_response_model.dart';
+import 'package:caps_book/features/data/repositories/maintenance_response_repository.dart';
 
-class MaintenanceDetailsScreen extends StatelessWidget {
-  const MaintenanceDetailsScreen({super.key});
+class EmergencyServiceDetails extends StatelessWidget {
+  const EmergencyServiceDetails({super.key});
 
-  Future<MaintenanceResult> fetchFirstMaintenance() async {
-    final repo = MaintenanceRepository();
-    final response = await repo.fetchMaintenanceList();
+  Future<TodayMaintenanceResult> fetchEmergencyServiceData() async {
+    final repo = UnplannedMaintenanceRepository();
+    final response = await repo.fetchUnplannedMaintenanceList();
     if (response.data.results.isEmpty) {
-      throw Exception("No maintenance data found.");
+      throw Exception("No emergency service data found.");
     }
     return response.data.results.first;
   }
 
-  String formatDate(String? isoDate) {
-    if (isoDate == null) return "-";
-    final dateTime = DateTime.parse(isoDate);
-    return DateFormat.yMMMMd().format(dateTime);
+  String formatDate(String? dateStr) {
+    if (dateStr == null) return "Not available";
+    final date = DateTime.parse(dateStr);
+    return DateFormat.yMMMMd().format(date);
   }
 
   Widget buildRow(String label, String value, {bool highlight = false}) {
@@ -41,7 +41,7 @@ class MaintenanceDetailsScreen extends StatelessWidget {
           Expanded(
             flex: 3,
             child: Text(
-              value,
+              value.isNotEmpty ? value : 'Not available',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: highlight ? FontWeight.bold : FontWeight.normal,
@@ -75,11 +75,11 @@ class MaintenanceDetailsScreen extends StatelessWidget {
         leading: IconButton(onPressed: (){
           Navigator.pop(context);
         }, icon: Icon(Icons.arrow_back,color: Colors.white,)),
-        title: const Text("Maintenance Details", style: TextStyle(color: Colors.white)),
+        title: const Text("Emergency Service Details", style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.teal,
       ),
-      body: FutureBuilder<MaintenanceResult>(
-        future: fetchFirstMaintenance(),
+      body: FutureBuilder<TodayMaintenanceResult>(
+        future: fetchEmergencyServiceData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -96,18 +96,17 @@ class MaintenanceDetailsScreen extends StatelessWidget {
             child: ListView(
               children: [
                 sectionTitle("Basic Info"),
-                buildRow("Maintenance ID", data.maintenanceId ?? "Not entered"),
+                buildRow("Service ID", data.maintenanceId ?? "Not entered"),
                 buildRow("Vehicle", data.vehicleDetails?.identity ?? "Not entered", highlight: true),
-
-                sectionTitle("Workshop Details"),
-                buildRow("Workshop", data.workshopDetails?.identity ?? "Not entered"),
-                buildRow("Phone", data.workshopDetails?.phone ?? "Not entered"),
 
                 sectionTitle("Maintenance Info"),
                 buildRow("Type", data.maintenanceType ?? "Not entered", highlight: true),
                 buildRow("Description", data.description ?? "Not entered"),
                 buildRow("Start Date", formatDate(data.startDate)),
-                buildRow("Start KM", "${data.startKm ?? 'Not entered'} km"),
+                buildRow("End Date", formatDate(data.endDate)),
+                buildRow("Start KM", data.startKm ?? "Not entered Km"),
+                buildRow("End KM", data.endKm ?? "Not entered"),
+                buildRow("Cost", "₹${data.cost ?? '0.00'}"),
 
                 sectionTitle("Status"),
                 buildRow("Maintenance", data.maintenanceStatus ?? "Not entered", highlight: true),

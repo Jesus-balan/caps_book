@@ -26,7 +26,7 @@ class CommonDatePickerField extends StatelessWidget {
         style: GoogleFonts.lora(fontSize: 16, color: Colors.black),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: GoogleFonts.lora(fontSize: 16, color: ColorStyle.primaryColor),
+          labelStyle: GoogleFonts.lora(fontSize: 16, color: Colors.black),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           filled: true,
           fillColor: Colors.white,

@@ -36,7 +36,7 @@ final String uuid;
     dropAddress: json['end_place'] ?? '',
     bookingType: json['rent_type'] ?? '', // Changed from booking_status
     booking_status: json['booking_status'] ?? '', // Changed from booking_status
-    customerPhone: json['booking_status'] ?? '', 
+    customerPhone: json['customer_details']?['phone'] ?? '',
     startKm: json['start_km'] ?? '', 
     uuid: json['uuid'] ?? '', 
   );

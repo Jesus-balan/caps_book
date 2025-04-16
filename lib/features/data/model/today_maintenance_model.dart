@@ -51,19 +51,19 @@ class MaintenanceData {
 class MaintenanceResult {
   final int id;
   final String uuid;
-  final String maintenanceId;
+  final String? maintenanceId;
   final WorkshopDetails? workshopDetails;
   final VehicleDetails vehicleDetails;
   final int driver;
-  final String maintenanceType;
-  final String description;
-  final String startDate;
-  final String startKm;
+  final String? maintenanceType;
+  final String? description;
+  final String? startDate;
+  final String? startKm;
   final String? endKm;
   final String? endDate;
   final String? cost;
-  final String maintenanceStatus;
-  final String paymentStatus;
+  final String? maintenanceStatus;
+  final String? paymentStatus;
   final dynamic maintenancebillImageDetails;
 
   MaintenanceResult({
@@ -86,28 +86,29 @@ class MaintenanceResult {
   });
 
   factory MaintenanceResult.fromJson(Map<String, dynamic> json) {
-  return MaintenanceResult(
-    id: json['id'],
-    uuid: json['uuid'],
-    maintenanceId: json['maintenance_id'],
-    workshopDetails: json['workshop_details'] != null
-        ? WorkshopDetails.fromJson(json['workshop_details'])
-        : null,
-    vehicleDetails: VehicleDetails.fromJson(json['vehicle_details']),
-    driver: json['driver'],
-    maintenanceType: json['maintenance_type'],
-    description: json['description'],
-    startDate: json['start_date'],
-    startKm: json['start_km'],
-    endKm: json['end_km'],
-    endDate: json['end_date'],
-    cost: json['cost'],
-    maintenanceStatus: json['maintenance_status'],
-    paymentStatus: json['payment_status'],
-    maintenancebillImageDetails: json['maintenancebill_image_details'],
-  );
+    return MaintenanceResult(
+      id: json['id'],
+      uuid: json['uuid'],
+      maintenanceId: json['maintenance_id'],
+      workshopDetails: json['workshop_details'] != null
+          ? WorkshopDetails.fromJson(json['workshop_details'])
+          : null,
+      vehicleDetails: VehicleDetails.fromJson(json['vehicle_details']),
+      driver: json['driver'],
+      maintenanceType: json['maintenance_type'],
+      description: json['description'],
+      startDate: json['start_date'],
+      startKm: json['start_km'],
+      endKm: json['end_km'],
+      endDate: json['end_date'],
+      cost: json['cost'],
+      maintenanceStatus: json['maintenance_status'],
+      paymentStatus: json['payment_status'],
+      maintenancebillImageDetails: json['maintenancebill_image_details'],
+    );
+  }
 }
-}
+
 
 class WorkshopDetails {
   final int id;

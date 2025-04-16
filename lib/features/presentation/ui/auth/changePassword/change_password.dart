@@ -1,3 +1,4 @@
+import 'package:caps_book/features/config/styles.dart';
 import 'package:caps_book/features/core/network/hive_service.dart';
 import 'package:caps_book/features/presentation/widgets/snackbar_widget.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   bool _isLoading = false;
 
   final String apiUrl =
-      "https://h5r5msdk-1111.inc1.devtunnels.ms/customer/change/password/";
+      "https://cabs.zenvicsoft.com/customer/change/password/";
 
   Future<void> changePassword() async {
     final newPassword = newPasswordController.text.trim();
@@ -126,189 +127,158 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: screenWidth * 0.06,
-              vertical: screenHeight * 0.03,
-            ),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: screenHeight * 0.05),
-                  // App Logo & Title
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: screenWidth * 0.05,
-                        backgroundColor: Colors.blue,
-                        child: Text(
-                          "GO",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: screenWidth * 0.035,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: screenWidth * 0.02),
-                      Text(
-                        "Drive",
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.05,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+      appBar: AppBar(
+          title: const Text("Change Password"),
+          backgroundColor: ColorStyle.primaryColor,
+          foregroundColor: Colors.white,
+          elevation: 2,
+        ),
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.06,
+            vertical: screenHeight * 0.03,
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [              
+                SizedBox(height: screenHeight * 0.02),
+                Center(
+                  child: Image.asset(
+                    'assets/images/changePass.png',
+                    height: screenHeight * 0.22,
                   ),
-                  SizedBox(height: screenHeight * 0.02),
-                  Text(
-                    "Reset Password",
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.06,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blueAccent,
-                    ),
-                  ),
-                  SizedBox(height: screenHeight * 0.02),
-                  Center(
-                    child: Image.asset(
-                      'assets/images/changePass.png',
-                      height: screenHeight * 0.25,
-                    ),
-                  ),
-                  SizedBox(height: screenHeight * 0.04),
-
-                  // New Password
-                  Text(
-                    "New Password",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    controller: newPasswordController,
-                    obscureText: !isNewPasswordVisible,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a password';
-                      } else if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
-                      return null;
-                    },
-
-                    decoration: InputDecoration(
-                      hintText: "Enter new password",
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            isNewPasswordVisible = !isNewPasswordVisible;
-                          });
-                        },
-                        icon: Icon(
-                          isNewPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                        ),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
+                ),
+                SizedBox(height: screenHeight * 0.04),
+      
+                // New Password
+                Text(
+                  "New Password",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: newPasswordController,
+                  obscureText: !isNewPasswordVisible,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a password';
+                    } else if (value.length < 6) {
+                      return 'Password must be at least 6 characters';
+                    }
+                    return null;
+                  },
+      
+                  decoration: InputDecoration(
+                    hintText: "Enter new password",
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          isNewPasswordVisible = !isNewPasswordVisible;
+                        });
+                      },
+                      icon: Icon(
+                        isNewPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
                     ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Confirm Password
-                  Text(
-                    "Confirm Password",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    controller: confirmPasswordController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please confirm your password';
-                      } else if (value != newPasswordController.text) {
-                        return 'Passwords do not match';
-                      }
-                      return null;
-                    },
-
-                    obscureText: !isConfirmPasswordVisible,
-                    decoration: InputDecoration(
-                      hintText: "Re-enter password",
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            isConfirmPasswordVisible =
-                                !isConfirmPasswordVisible;
-                          });
-                        },
-                        icon: Icon(
-                          isConfirmPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                        ),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
                     ),
                   ),
-
-                  SizedBox(height: screenHeight * 0.05),
-
-                  // Submit Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(
-                          vertical: screenHeight * 0.02,
-                        ),
-                        backgroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                ),
+      
+                const SizedBox(height: 20),
+      
+                // Confirm Password
+                Text(
+                  "Confirm Password",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  controller: confirmPasswordController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please confirm your password';
+                    } else if (value != newPasswordController.text) {
+                      return 'Passwords do not match';
+                    }
+                    return null;
+                  },
+      
+                  obscureText: !isConfirmPasswordVisible,
+                  decoration: InputDecoration(
+                    hintText: "Re-enter password",
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          isConfirmPasswordVisible =
+                              !isConfirmPasswordVisible;
+                        });
+                      },
+                      icon: Icon(
+                        isConfirmPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
-                      onPressed: changePassword,
-                      child:
-                          _isLoading
-                              ? SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.5,
-                                  color: Colors.white,
-                                ),
-                              )
-                              : Text(
-                                "Change Password",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: screenWidth * 0.045,
-                                ),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
+                ),
+      
+                SizedBox(height: screenHeight * 0.05),
+      
+                // Submit Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        vertical: screenHeight * 0.02,
+                      ),
+                      backgroundColor: ColorStyle.primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: changePassword,
+                    child:
+                        _isLoading
+                            ? SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
                               ),
-                    ),
+                            )
+                            : Text(
+                              "Change Password",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: screenWidth * 0.045,
+                              ),
+                            ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

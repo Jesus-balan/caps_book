@@ -36,9 +36,10 @@ class TodayMaintenanceData {
       count: json['count'],
       next: json['next'],
       previous: json['previous'],
-      results: (json['results'] as List)
-          .map((e) => TodayMaintenanceResult.fromJson(e))
-          .toList(),
+      results:
+          (json['results'] as List)
+              .map((e) => TodayMaintenanceResult.fromJson(e))
+              .toList(),
     );
   }
 }
@@ -46,19 +47,19 @@ class TodayMaintenanceData {
 class TodayMaintenanceResult {
   final int id;
   final String uuid;
-  final String maintenanceId;
+  final String? maintenanceId;
   final TodayWorkshopDetails? workshopDetails;
   final TodayVehicleDetails vehicleDetails;
   final int driver;
-  final String maintenanceType;
-  final String description;
-  final String startDate;
-  final String startKm;
+  final String? maintenanceType;
+  final String? description;
+  final String? startDate;
+  final String? startKm;
   final String? endKm;
   final String? endDate;
   final String? cost;
-  final String maintenanceStatus;
-  final String paymentStatus;
+  final String? maintenanceStatus;
+  final String? paymentStatus;
   final dynamic maintenancebillImageDetails;
 
   TodayMaintenanceResult({
@@ -85,9 +86,10 @@ class TodayMaintenanceResult {
       id: json['id'],
       uuid: json['uuid'],
       maintenanceId: json['maintenance_id'],
-      workshopDetails: json['workshop_details'] != null
-          ? TodayWorkshopDetails.fromJson(json['workshop_details'])
-          : null,
+      workshopDetails:
+          json['workshop_details'] != null
+              ? TodayWorkshopDetails.fromJson(json['workshop_details'])
+              : null,
       vehicleDetails: TodayVehicleDetails.fromJson(json['vehicle_details']),
       driver: json['driver'],
       maintenanceType: json['maintenance_type'],

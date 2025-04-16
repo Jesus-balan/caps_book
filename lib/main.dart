@@ -2,7 +2,7 @@ import 'package:caps_book/features/config/routes.dart';
 import 'package:caps_book/features/config/styles.dart';
 import 'package:caps_book/features/data/repositories/login_repository.dart';
 import 'package:caps_book/features/data/repositories/ride_boking_repository.dart';
-import 'package:caps_book/features/presentation/blocs/login-auth/bloc/login_bloc.dart';
+import 'package:caps_book/features/presentation/blocs/login-auth/login_bloc.dart';
 import 'package:caps_book/features/presentation/blocs/ridebooking/myride_bloc.dart';
 import 'package:caps_book/features/presentation/blocs/ridebooking/myride_event.dart';
 import 'package:flutter/material.dart';
