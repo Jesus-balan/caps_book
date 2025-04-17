@@ -97,21 +97,27 @@ class BookingDetails {
   final int id;
   final String uuid;
   final String startPlace;
+  final DateTime startDate;
+  final DateTime? endDate;
   final String? endPlace;
 
   BookingDetails({
     required this.id,
     required this.uuid,
     required this.startPlace,
+    required this.startDate,
     this.endPlace,
+    this.endDate,
   });
 
   factory BookingDetails.fromJson(Map<String, dynamic> json) {
     return BookingDetails(
       id: json['id'],
       uuid: json['uuid'],
+      startDate: DateTime.parse(json['start_date']),
       startPlace: json['start_place'],
       endPlace: json['end_place'],
+      endDate: json['end_date'] != null ? DateTime.parse(json['end_date']) : null,
     );
   }
 }

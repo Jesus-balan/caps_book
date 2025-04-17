@@ -20,8 +20,10 @@ class BettaListScreen extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
+          }  else if (snapshot.hasError) {
+            return const Center(
+              child: Text("Something went wrong. Please try again."),
+            );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text("No betta data found"));
           }
@@ -93,9 +95,13 @@ class BettaListScreen extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            const Text("📍 ", style: TextStyle(fontSize: 14)),
+                            const Text("📅 ", style: TextStyle(fontSize: 14)),
                             Text(
-                              betta.bookingDetails?.startPlace ?? "N/A",
+                              betta.bookingDetails?.startDate != null
+                                  ? "${betta.bookingDetails!.startDate.day.toString().padLeft(2, '0')}/"
+                                      "${betta.bookingDetails!.startDate.month.toString().padLeft(2, '0')}/"
+                                      "${betta.bookingDetails!.startDate.year}"
+                                  : "Date not available",
                               style: const TextStyle(fontSize: 14),
                             ),
                           ],

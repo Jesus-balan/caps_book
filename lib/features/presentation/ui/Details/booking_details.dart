@@ -99,7 +99,7 @@ class _RideSummaryScreenState extends State<RideSummaryScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Failed to start trip. Code: ${response.statusCode}"),
+            content: Text("Failed to start trip."),
           ),
         );
       }

@@ -192,6 +192,7 @@ class _UnplannedMaintenanceSheetState extends State<UnplannedMaintenanceSheet> {
                 label: 'Cost',
                 controller: costController,
                 validator: fieldValidator,
+                keyboardType: TextInputType.number,
               ),
               SizedBox(height: screenHeight * 0.015),
 

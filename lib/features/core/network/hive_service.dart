@@ -87,4 +87,15 @@ class HiveService {
     final box = await _getCapsBox();
     return box.get(key);
   }
+
+  Future<void> saveRefreshToken(String token) async {
+  final box = await Hive.openBox('auth');
+  await box.put('refreshToken', token);
+}
+
+Future<String?> getRefreshToken() async {
+  final box = await Hive.openBox('auth');
+  return box.get('refreshToken');
+}
+
 }
