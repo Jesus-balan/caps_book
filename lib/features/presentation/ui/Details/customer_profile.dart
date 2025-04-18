@@ -184,7 +184,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       File imageFile = File(pickedFile.path);
                       await uploadAndUpdateProfileImage(imageFile);
                     } else {
-                      print('⚠️ No image selected.');
                     }
                   },
                   child: Container(

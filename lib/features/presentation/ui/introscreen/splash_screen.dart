@@ -37,7 +37,6 @@ class SplashScreen extends StatelessWidget {
                 width: width * 0.4,
                 color: Colors.white,
               ),
-              SizedBox(height: height * 0.02),
               DefaultTextStyle(
                 style: GoogleFonts.lora(
                   fontSize: width * 0.06,
