@@ -10,13 +10,20 @@ class LoginRepository {
   Future<String> login(LoginModel loginModel) async {
     try {
       final response = await DioClient.client.post(
-        ApiConstants.login, // this should be "access/login/"
+        ApiConstants.login, // should be "/access/login/"
         data: loginModel.toJson(),
       );
+
       if (response.statusCode == 200) {
         final data = response.data['data'];
-        final accessToken = data['access']; // Save this
+
+        final accessToken = data['access'];
+        final refreshToken = data['refresh'];
+
+        // Save both tokens
         await hiveService.saveToken(accessToken);
+        await hiveService.saveRefreshToken(refreshToken);
+
         return data['message']; // return "Login successful."
       } else {
         throw Exception("Login failed with status code.");
